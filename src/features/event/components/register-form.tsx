@@ -1,67 +1,164 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+import { useActionState, useEffect } from 'react'
+import { toast } from 'sonner'
+
+import type { RegisterParticipantResponse } from '@/types/event'
 
 import { Button } from '@/components/ui/button'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
-import type { Schema } from '../lib/register-form-schema'
+import { registerParticipant } from '../actions'
 
-import { schema } from '../lib/register-form-schema'
+const initialState: RegisterParticipantResponse = {
+  message: '',
+}
 
 export default function RegisterForm() {
-  const form = useForm<Schema>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-    },
-  })
+  const [state, action, isPending] = useActionState(registerParticipant, initialState)
 
-  const onSubmit = (values: Schema) => {
-    console.warn('🚀 ~ onSubmit ~ values:', values)
-  }
+  useEffect(() => {
+    if (state.data) {
+      toast(`${state.data.firstName} ${state.data.lastName} has been registered.`, {
+        description: 'Saturday, May 17, 2025 at 9:00 AM',
+      })
+    }
+  }, [state])
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>First Name</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Last Name</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Pay</Button>
-      </form>
-    </Form>
+    <Card>
+      <CardHeader>
+        <CardTitle>Register for tornament</CardTitle>
+        <CardDescription>Enter a participant's details and pay using MPESA.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form action={action} autoComplete="on">
+          <div className="grid grid-cols-2 gap-4 w-full pb-6">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                placeholder="Grace"
+                required
+                minLength={2}
+                maxLength={50}
+                autoComplete="given-name"
+                aria-describedby="firstName-error"
+                className={state?.errors?.firstName ? 'border-red-500' : ''}
+              />
+              {state?.errors?.firstName && (
+                <p id="firstName-error" className="text-sm text-red-500">
+                  {state.errors.firstName[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                placeholder="Brooks"
+                required
+                minLength={2}
+                maxLength={50}
+                autoComplete="family-name"
+                aria-describedby="lastName-error"
+                className={state?.errors?.lastName ? 'border-red-500' : ''}
+              />
+              {state?.errors?.lastName && (
+                <p id="lastName-error" className="text-sm text-red-500">
+                  {state.errors.lastName[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="gender">Gender</Label>
+              <Select name="gender">
+                <SelectTrigger
+                  id="gender"
+
+                  className={`w-full ${state?.errors?.gender ? 'border-red-500' : ''}`}
+                  aria-describedby="gender-error"
+                >
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+              {state?.errors?.gender && (
+                <p id="gender-error" className="text-sm text-red-500">
+                  {state.errors.gender[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="age">Age</Label>
+              <Input
+                id="age"
+                name="age"
+                placeholder="6"
+                required
+                type="number"
+                min="1"
+                max="100"
+                aria-describedby="age-error"
+                className={state?.errors?.age ? 'border-red-500' : ''}
+              />
+              {state?.errors?.age && (
+                <p id="age-error" className="text-sm text-red-500">
+                  {state.errors.age[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="mobile">MPESA Number</Label>
+              <Input
+                id="mobile"
+                name="mobile"
+                placeholder="0721622726"
+                required
+                minLength={10}
+                maxLength={12}
+                type="tel"
+                autoComplete="tel"
+                aria-describedby="mobile-error"
+                className={state?.errors?.mobile ? 'border-red-500' : ''}
+              />
+              {state?.errors?.mobile && (
+                <p id="mobile-error" className="text-sm text-red-500">
+                  {state.errors.mobile[0]}
+                </p>
+              )}
+            </div>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+          >
+            {isPending ? 'Saving...' : 'Pay With MPESA'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 }

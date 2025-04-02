@@ -8,6 +8,13 @@
       "when": 1743588667054,
       "tag": "0000_solid_bulldozer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1743613070965,
+      "tag": "0001_illegal_secret_warriors",
+      "breakpoints": true
     }
   ]
 }
