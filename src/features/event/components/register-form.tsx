@@ -34,11 +34,16 @@ export default function RegisterForm() {
 
   useEffect(() => {
     if (state.data) {
-      toast(`${state.data.firstName} ${state.data.lastName} has been registered.`, {
-        description: 'Saturday, May 17, 2025 at 9:00 AM',
+      toast.success('Registration successful', {
+        description: `${state.data.firstName} ${state.data.lastName} has been registered.`,
       })
     }
-  }, [state])
+    else if (state.errors && !state.data) {
+      toast.error('Registration failed', {
+        description: state.message,
+      })
+    }
+  }, [state.data, state.message])
 
   return (
     <Card>
