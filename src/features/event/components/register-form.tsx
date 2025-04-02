@@ -43,7 +43,7 @@ export default function RegisterForm() {
         description: state.message,
       })
     }
-  }, [state.data, state.message])
+  }, [state.data, state.message, state.errors])
 
   return (
     <Card>
