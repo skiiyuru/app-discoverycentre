@@ -1,5 +1,7 @@
-import RegisterForm from '@/features/event/components/register-form'
 import Image from 'next/image'
+
+import RegisterForm from '@/features/event/components/register-form'
+
 import flyer from '../../public/images/flyer-web.png'
 
 export default function Home() {
