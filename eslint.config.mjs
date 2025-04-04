@@ -3,7 +3,7 @@ import antfu from '@antfu/eslint-config'
 export default antfu({
   formatters: true,
   react: true,
-  ignores: ['src/components/*/**'],
+  ignores: ['src/components/**', 'src/db/migrations/**'],
   extends: [
     'plugin:@next/next/recommended',
     'plugin:@next/next/core-web-vitals',

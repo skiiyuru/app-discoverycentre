@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import type { RegisterParticipantResponse } from '@/types/event'
+import type { RegisterParticipantResponse } from '@/lib/events/types/types'
 
 import { Button } from '@/components/ui/button'
 import {

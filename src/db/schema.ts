@@ -1,8 +1,8 @@
 import { sql } from 'drizzle-orm'
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { randomUUID } from 'node:crypto'
 
-import { Gender } from '@/types/event'
+import { Gender } from '@/lib/events/types/types'
 
 function generateId() {
   return text('id').primaryKey().$default(() => randomUUID())

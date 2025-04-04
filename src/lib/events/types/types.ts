@@ -1,4 +1,4 @@
-import type { participants } from '../../db/schema'
+import type { participants } from '../../../db/schema'
 
 export enum Gender {
   Male = 'male',

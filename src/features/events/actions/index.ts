@@ -3,10 +3,10 @@
 import { LibsqlError } from '@libsql/client'
 import { createInsertSchema } from 'drizzle-zod'
 
-import type { RegisterParticipantResponse } from '@/types/event'
+import type { RegisterParticipantResponse } from '@/lib/events/types/types'
 
-import { db } from '../../../../db/db'
-import { participants } from '../../../../db/schema'
+import { db } from '@/db/db'
+import { participants } from '@/db/schema'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
   const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true })

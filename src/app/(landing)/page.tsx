@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import RegisterForm from '@/features/event/components/register-form'
+import RegisterForm from '@/features/events/components/register-form'
 
 import flyer from '../../../public/images/flyer-web.png'
 
