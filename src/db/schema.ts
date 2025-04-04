@@ -16,6 +16,7 @@ function createdAt() {
 export const participants = sqliteTable('participants', {
   id: generateId(),
   createdAt: createdAt(),
+
   firstName: text('first_name').notNull(),
   lastName: text('last_name').notNull(),
   gender: text({ enum: [Gender.Male, Gender.Female] }).notNull(),
@@ -25,13 +26,15 @@ export const participants = sqliteTable('participants', {
 export const payments = sqliteTable('payments', {
   id: generateId(),
   createdAt: createdAt(),
+
   participantId: text('participant_id').notNull(),
   checkoutRequestId: text('checkout_request_id').notNull().unique(),
   merchantRequestId: text('merchant_request_id').notNull(),
   phoneNumber: text('phone_number').notNull(),
   amount: text('amount').notNull(),
-  mpesaReceiptNumber: text('mpesa_receipt_number').notNull(),
-  transactionDate: text().notNull(),
+
+  mpesaReceiptNumber: text('mpesa_receipt_number').notNull().default(''),
+  transactionDate: text().notNull().default(''),
   status: text({ enum: [PaymentStatus.Pending, PaymentStatus.Success, PaymentStatus.Failed] }).notNull().default(PaymentStatus.Pending),
 })
 

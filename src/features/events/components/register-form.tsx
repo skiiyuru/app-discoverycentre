@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { registerParticipant } from '../actions'
+import { registerParticipant } from '../actions/register-participant'
 
 const initialState: RegisterParticipantResponse = {
   message: '',
@@ -134,22 +134,22 @@ export default function RegisterForm() {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="mobile">MPESA Number</Label>
+              <Label htmlFor="phoneNumber">MPESA Number</Label>
               <Input
-                id="mobile"
-                name="mobile"
+                id="phoneNumber"
+                name="phoneNumber"
                 placeholder="0721622726"
                 required
                 minLength={10}
                 maxLength={12}
                 type="tel"
                 autoComplete="tel"
-                aria-describedby="mobile-error"
-                className={state?.errors?.mobile ? 'border-red-500' : ''}
+                aria-describedby="phoneNumber-error"
+                className={state?.errors?.phoneNumber ? 'border-red-500' : ''}
               />
-              {state?.errors?.mobile && (
-                <p id="mobile-error" className="text-sm text-red-500">
-                  {state.errors.mobile[0]}
+              {state?.errors?.phoneNumber && (
+                <p id="phoneNumber-error" className="text-sm text-red-500">
+                  {state.errors.phoneNumber[0]}
                 </p>
               )}
             </div>

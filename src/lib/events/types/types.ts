@@ -1,16 +1,25 @@
-import type { participants } from '../../../db/schema'
+import type { participants, payments } from '@/db/schema'
 
 export enum Gender {
   Male = 'male',
   Female = 'female',
 }
 
-export type NewParticipant = Omit<typeof participants.$inferInsert, 'id' | 'createdAt'>
+ type SelectParticipant = typeof participants.$inferSelect
+ type InsertParticipant = typeof participants.$inferInsert
+
+ type SelectPayment = typeof payments.$inferSelect
+//  type InsertPayment = typeof payments.$inferInsert
+
+type InsertParticipantErrors = {
+  [K in keyof InsertParticipant]?: string[]
+} & { phoneNumber?: string[] }
 
 export type RegisterParticipantResponse = {
-  data?: NewParticipant
-  message: string
-  errors?: {
-    [K in keyof NewParticipant]?: string[];
+  data?: {
+    participant: SelectParticipant
+    payment: SelectPayment
   }
+  errors?: InsertParticipantErrors
+  message?: string
 }

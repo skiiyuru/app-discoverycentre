@@ -40,7 +40,7 @@ export default function RootLayout({
           <main>
             {children}
           </main>
-          <Toaster position="bottom-left" richColors />
+          <Toaster position="bottom-left" richColors duration={7000} closeButton />
         </ThemeProvider>
       </body>
     </html>

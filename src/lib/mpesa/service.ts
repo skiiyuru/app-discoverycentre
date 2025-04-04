@@ -3,7 +3,6 @@ import { Buffer } from 'node:buffer'
 import type { MpesaAuthResponse, StkPushRequest, StkPushResponse } from './types'
 
 import { env } from '../env'
-import { MpesaError } from './errors'
 
 class MpesaService {
   private accessToken: string | null = null
@@ -64,12 +63,12 @@ class MpesaService {
 
     const data = await response.json() as StkPushResponse
 
-    if (data.ResponseCode !== '0') {
-      throw new MpesaError(data.ResponseDescription, data.ResponseCode)
-    }
+    // if (data.ResponseCode !== '0') {
+    //   throw new MpesaError(data.ResponseDescription, data.ResponseCode)
+    // }
 
     return data
   }
 }
 
-export const mpesaService = new MpesaService()
+export const mpesa = new MpesaService()
