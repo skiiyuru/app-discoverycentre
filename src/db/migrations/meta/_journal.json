@@ -15,6 +15,13 @@
       "when": 1743613070965,
       "tag": "0001_illegal_secret_warriors",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1743764826789,
+      "tag": "0002_married_ken_ellis",
+      "breakpoints": true
     }
   ]
 }

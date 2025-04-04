@@ -3,6 +3,12 @@ export enum TransactionType {
   BuyGoods = 'CustomerBuyGoodsOnline',
 }
 
+export enum PaymentStatus {
+  Pending = 'pending',
+  Success = 'success',
+  Failed = 'failed',
+}
+
 export type MpesaAuthResponse = {
   access_token: string
   expires_in: string
