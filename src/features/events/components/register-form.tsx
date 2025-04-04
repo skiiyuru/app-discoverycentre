@@ -35,7 +35,7 @@ export default function RegisterForm() {
   useEffect(() => {
     if (state.data) {
       toast.success('Registration successful', {
-        description: `${state.data.firstName} ${state.data.lastName} has been registered.`,
+        description: `${state.data.participant.firstName} ${state.data.participant.lastName} has been registered.`,
       })
     }
     else if (state.errors && !state.data) {
