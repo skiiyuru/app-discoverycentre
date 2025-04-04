@@ -55,6 +55,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -75,3 +77,4 @@ jobs:
 
       - name: Build application
         run: pnpm build
+
