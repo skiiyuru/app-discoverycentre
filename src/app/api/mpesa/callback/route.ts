@@ -2,30 +2,11 @@ import type { NextRequest } from 'next/server'
 
 import { LibsqlError } from '@libsql/client'
 import { and, eq } from 'drizzle-orm'
-import { z } from 'zod'
 
 import { db } from '@/db/db'
 import { payments } from '@/db/schema'
+import { callbackSchema } from '@/lib/mpesa/schemas'
 import { PaymentStatus } from '@/lib/mpesa/types'
-
-export const callbackSchema = z.object({
-  Body: z.object({
-    stkCallback: z.object({
-      MerchantRequestID: z.string(),
-      CheckoutRequestID: z.string(),
-      ResultCode: z.number(),
-      ResultDesc: z.string(),
-      CallbackMetadata: z
-        .object({
-          Item: z.array(z.object({
-            Name: z.string(),
-            Value: z.union([z.string(), z.number()]),
-          })),
-        })
-        .optional(),
-    }),
-  }),
-})
 
 export async function POST(request: NextRequest) {
   try {

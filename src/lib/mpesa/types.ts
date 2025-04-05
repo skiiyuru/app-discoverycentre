@@ -1,6 +1,6 @@
 import type { z } from 'zod'
 
-import type { callbackSchema } from '@/app/api/mpesa/callback/route'
+import type { callbackSchema } from './schemas'
 
 export enum TransactionType {
   Paybill = 'CustomerPayBillOnline',
