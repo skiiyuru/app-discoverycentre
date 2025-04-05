@@ -1,3 +1,7 @@
+import type { z } from 'zod'
+
+import type { callbackSchema } from './schemas'
+
 export enum TransactionType {
   Paybill = 'CustomerPayBillOnline',
   BuyGoods = 'CustomerBuyGoodsOnline',
@@ -36,21 +40,4 @@ export type StkPushResponse = {
   CustomerMessage: string
 }
 
-export type StkCallbackItem = {
-  Name: string
-  Value: number | string
-}
-
-export type StkCallbackResponse = {
-  Body: {
-    stkCallback: {
-      MerchantRequestID: string
-      CheckoutRequestID: string
-      ResultCode: number
-      ResultDesc: string
-      CallbackMetadata?: {
-        Item: StkCallbackItem[]
-      }
-    }
-  }
-}
+export type StkCallbackResponse = z.infer<typeof callbackSchema>
