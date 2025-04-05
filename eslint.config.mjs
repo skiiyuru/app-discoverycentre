@@ -16,7 +16,7 @@ export default antfu({
     'antfu/no-top-level-await': ['off'],
     'node/prefer-global/process': ['off'],
     'node/no-process-env': ['error', {
-      allowedVariables: ['NEXT_RUNTIME'],
+      allowedVariables: ['NEXT_RUNTIME', 'CI'],
     }],
     'perfectionist/sort-imports': ['error', {
       tsconfigRootDir: '.',
