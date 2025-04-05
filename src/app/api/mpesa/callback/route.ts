@@ -27,7 +27,7 @@ export const callbackSchema = z.object({
   }),
 })
 
-export default async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
     const payload = await request.json()
     const result = callbackSchema.safeParse(payload)
