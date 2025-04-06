@@ -71,13 +71,12 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
       },
     }
   }
-  catch (error: unknown) {
+  catch (error) {
     if (error instanceof LibsqlError) {
-      // Handle specific database errors
       throw new TypeError(`Database error: ${error.message}`)
     }
 
-    // Handle other unknown errors
+    console.error('🚀 ~ registerParticipant ~ error:', error)
     throw new Error('Something went wrong while registering participant')
   }
 }
