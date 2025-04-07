@@ -16,10 +16,12 @@ export function emitPaymentUpdate(paymentId: string, update: PaymentUpdate) {
     try {
       const message = encoder.encode(`data: ${JSON.stringify(update)}\n\n`)
       controller.enqueue(message)
-    } catch (error) {
+    }
+    catch (error) {
       console.error(`Failed to emit update for payment ${paymentId}:`, error)
     }
-  } else {
+  }
+  else {
     console.warn(`No controller found for payment ${paymentId}`)
   }
 }

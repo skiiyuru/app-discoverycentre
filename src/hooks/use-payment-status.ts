@@ -18,7 +18,8 @@ export function usePaymentStatus(paymentId: string) {
         const data = JSON.parse(event.data)
         setPayment(data)
         setRetryCount(0) // Reset retry count on successful message
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Failed to parse message:', error)
       }
     }
@@ -26,10 +27,10 @@ export function usePaymentStatus(paymentId: string) {
     eventSource.onerror = (error) => {
       console.error('EventSource failed:', error)
       eventSource.close()
-      
+
       if (retryCount < maxRetries) {
-        const delay = Math.pow(2, retryCount) * 1000 // Exponential backoff
-        console.log(`Retrying connection in ${delay}ms... (${retryCount + 1}/${maxRetries})`)
+        const delay = 2 ** retryCount * 1000 // Exponential backoff
+        console.info(`Retrying connection in ${delay}ms... (${retryCount + 1}/${maxRetries})`)
         retryTimeout = setTimeout(() => {
           setRetryCount(prev => prev + 1)
         }, delay)

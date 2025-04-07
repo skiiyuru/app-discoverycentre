@@ -1,5 +1,7 @@
 import type { NextRequest } from 'next/server'
 
+import { typedGlobalThis } from '@/lib/payments/types'
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const payment_id = searchParams.get('payment_id')
@@ -12,14 +14,14 @@ export async function GET(request: NextRequest) {
   const stream = new ReadableStream({
     start(controller) {
       const key = `payment-controller:${payment_id}`
-      globalThis[key] = controller
+      typedGlobalThis[key] = controller
 
       const message = encoder.encode(`data: {"status": "connecting"\n\n}`)
       controller.enqueue(message)
     },
     cancel() {
       const key = `payment-controller:${payment_id}`
-      delete globalThis[key]
+      delete typedGlobalThis[key]
     },
   })
 
