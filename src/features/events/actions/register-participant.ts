@@ -27,16 +27,13 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
   if (!result.success) {
     return {
       errors: result.error.flatten().fieldErrors,
-      message: 'Some fields have errors',
+      errorMessage: 'Some fields have errors',
     }
   }
 
   const { phoneNumber, ...insertParticipantValues } = result.data
 
   try {
-    const insertParticipantResults = await db.insert(participants).values(insertParticipantValues).returning()
-    const savedParticipant = insertParticipantResults[0]
-
     // TODO: Replace with real values
     const amount = '1'
     const accountReference = 'Test'
@@ -51,9 +48,12 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
 
     if (response.ResponseCode !== '0') {
       return {
-        message: `Unable to initiate payment (code: ${response.ResponseCode}) - ${response.ResponseDescription}`,
+        errorMessage: `Unable to initiate payment (code: ${response.ResponseCode}) - ${response.ResponseDescription}`,
       }
     }
+
+    const insertParticipantResults = await db.insert(participants).values(insertParticipantValues).returning()
+    const savedParticipant = insertParticipantResults[0]
 
     const insertPaymentResults = await db.insert(payments).values({
       participantId: savedParticipant.id,
