@@ -30,7 +30,7 @@ export function usePaymentStatus(paymentId: string) {
 
       if (retryCount < maxRetries) {
         const delay = 2 ** retryCount * 1000 // Exponential backoff
-        console.info(`Retrying connection in ${delay}ms... (${retryCount + 1}/${maxRetries})`)
+        console.warn(`Retrying connection in ${delay}ms... (${retryCount + 1}/${maxRetries})`)
         retryTimeout = setTimeout(() => {
           setRetryCount(prev => prev + 1)
         }, delay)
