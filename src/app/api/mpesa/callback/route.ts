@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       }).where(and(eq(payments.merchantRequestId, stkCallback.MerchantRequestID), eq(payments.checkoutRequestId, stkCallback.CheckoutRequestID)))
 
       // trigger sse
-      emitPaymentUpdate(payment.id, { status: PaymentStatus.Failed, message: stkCallback.ResultDesc })
+      emitPaymentUpdate(payment.id, { status: PaymentStatus.Failed, errorMessage: stkCallback.ResultDesc })
 
       return Response.json({ success: true }, { status: 200 })
     }

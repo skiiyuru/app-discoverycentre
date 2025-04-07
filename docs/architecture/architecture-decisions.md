@@ -85,7 +85,7 @@ src/
 
 Current implementation uses SSE for real-time payment status updates with the following architecture:
 
-```
+```plaintext
 M-PESA Callback → Server Action → SSE → Client Component
 ```
 
@@ -130,7 +130,7 @@ As the application grows, consider these alternatives:
 
 2. **Alternative Technologies**
 
-   - WebSocket for bi-directional communication
+   - WebSocket for bidirectional communication
    - Pusher for managed real-time infrastructure
    - Socket.io for more complex real-time features
 

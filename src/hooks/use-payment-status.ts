@@ -11,7 +11,9 @@ export function usePaymentStatus(paymentId: string) {
 
   useEffect(() => {
     let retryTimeout: ReturnType<typeof setTimeout>
-    const eventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
+    let eventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
+    let isReconnecting = false
+    let delay: string | number | NodeJS.Timeout | undefined
 
     eventSource.onmessage = (event) => {
       try {
@@ -37,9 +39,30 @@ export function usePaymentStatus(paymentId: string) {
       }
     }
 
+    // Handle network status changes
+    const handleOnline = () => {
+      if (isReconnecting)
+        return
+
+      console.warn('Network reconnected, reestablishing SSE connection')
+      eventSource.close()
+      isReconnecting = true
+
+      // Small delay to ensure network is stable
+      delay = setTimeout(() => {
+        const newEventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
+        eventSource = newEventSource
+        isReconnecting = false
+      }, 1000)
+    }
+
+    window.addEventListener('online', handleOnline)
+
     return () => {
       eventSource.close()
       clearTimeout(retryTimeout)
+      window.removeEventListener('online', handleOnline)
+      clearTimeout(delay)
     }
   }, [paymentId, retryCount])
 

@@ -9,23 +9,21 @@ export default function PaymentStatusCard({ paymentId }: { paymentId: string }) 
     <Card>
       <CardTitle>{!paymentId ? 'Processing payment...' : `Payment ${payment?.status}`}</CardTitle>
       <CardContent>
-
-        { payment && payment.status === PaymentStatus.Success
+        {payment && payment.status === PaymentStatus.Success
           && (
-            <div>
-              <p>
+            <div aria-live="polite">
+              <p aria-label="Mpesa Receipt Information">
                 Mpesa receipt number:
                 {payment.mpesaReceiptNumber}
               </p>
-              <p>
+              <p aria-label="Transaction Date Information">
                 Transaction date:
                 {payment.transactionDate}
               </p>
             </div>
           )}
-
-        { payment && payment.status === PaymentStatus.Failed
-          && <p>{payment.message || 'An error occurred with your payment.'}</p>}
+        {payment && payment.status === PaymentStatus.Failed
+          && <p aria-live="assertive">{payment.errorMessage || 'An error occurred with your payment.'}</p>}
       </CardContent>
     </Card>
   )
