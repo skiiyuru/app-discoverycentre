@@ -21,5 +21,5 @@ export type RegisterParticipantResponse = {
     payment: SelectPayment
   }
   errors?: InsertParticipantErrors
-  message?: string
+  errorMessage?: string
 }
