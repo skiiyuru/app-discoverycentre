@@ -6,19 +6,6 @@ import type { PaymentUpdate } from '@/lib/payments/emit-payment-update'
 
 export function usePaymentStatus(paymentId: string) {
   const [payment, setPayment] = useState<PaymentUpdate | null>(null)
-
-  useEffect(() => {
-    const eventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      setPayment(data)
-    }
-
-import { useState, useEffect } from 'react'
-
-const usePaymentStatus = (paymentId) => {
-  const [payment, setPayment] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
   const maxRetries = 3
 
@@ -54,16 +41,6 @@ const usePaymentStatus = (paymentId) => {
       clearTimeout(retryTimeout)
     }
   }, [paymentId, retryCount])
-
-  return payment
-}
-
-export default usePaymentStatus
-
-    return () => {
-      eventSource.close()
-    }
-  }, [paymentId])
 
   return payment
 }
