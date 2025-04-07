@@ -1,5 +1,7 @@
 import type { PaymentStatus } from '../mpesa/types'
 
+import { typedGlobalThis } from './types'
+
 export type PaymentUpdate = {
   status: PaymentStatus
   mpesaReceiptNumber?: string
@@ -9,7 +11,7 @@ export type PaymentUpdate = {
 
 export function emitPaymentUpdate(paymentId: string, update: PaymentUpdate) {
   const key = `payment-controller:${paymentId}`
-  const controller = (globalThis as any)[key] as ReadableStreamDefaultController | undefined
+  const controller = typedGlobalThis[key]
 
   if (controller) {
     const encoder = new TextEncoder()

@@ -1,7 +1,5 @@
-type GlobalThis = typeof globalThis
-
 type CustomGlobalThis = {
   [key: string]: ReadableStreamDefaultController | undefined
-} & GlobalThis
+} & typeof globalThis
 
 export const typedGlobalThis = globalThis as CustomGlobalThis
