@@ -25,7 +25,7 @@ export default function PaymentStatusCard({ paymentId }: { paymentId: string }) 
           )}
 
         { payment && payment.status === PaymentStatus.Failed
-          && <p>{payment.message}</p>}
+          && <p>{payment.message || 'An error occurred with your payment.'}</p>}
       </CardContent>
     </Card>
   )
