@@ -18,7 +18,6 @@ export function usePaymentEvent(paymentId: string) {
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
-        // console.log('🚀 ~ usePaymentStatus ~ useEffect ~ data:', data)
         setPayment(data)
         setRetryCount(0) // Reset retry count on successful message
       }

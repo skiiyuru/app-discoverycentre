@@ -22,7 +22,6 @@ export default function Home() {
             priority
             className="w-1/2 md:w-2/3 lg:w-4/5"
             placeholder="blur"
-            loading="eager"
           />
         </div>
       </div>

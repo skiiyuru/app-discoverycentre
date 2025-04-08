@@ -24,12 +24,12 @@ class MpesaService {
     })
 
     if (!authResponse.ok) {
-      throw new Error(`M-PESA auth failed: ${authResponse.status} ${authResponse.statusText}`)
+      throw new MpesaError(`M-PESA auth failed: ${authResponse.status} ${authResponse.statusText}`, authResponse.status.toString())
     }
 
     const responseText = await authResponse.text()
     if (!responseText) {
-      throw new Error('M-PESA auth returned empty response')
+      throw new MpesaError('M-PESA auth returned empty response', 'EMPTY_RESPONSE')
     }
 
     try {

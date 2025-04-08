@@ -163,7 +163,7 @@ export default function RegisterForm() {
                       {state.errors.phoneNumber[0]}
                     </p>
                   )
-                : <p className="text-xs text-muted-foreground">Format: 254 followed by 9 digits</p>}
+                : <p className="text-xs text-muted-foreground">Enter your Phone Number in the format: 254XXXXXXXXX</p>}
             </div>
           </div>
 

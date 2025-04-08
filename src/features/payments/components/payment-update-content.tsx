@@ -24,7 +24,10 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
             <p aria-label="MPESA Receipt Information">
               Amount:
               {' '}
-              <span className="font-bold">{paymentEvent.amount}</span>
+              <span className="font-bold">
+                KES
+                {paymentEvent.amount?.toLocaleString()}
+              </span>
             </p>
             <p aria-label="MPESA Receipt Information">
               MPESA receipt number:

@@ -66,9 +66,6 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
 
     const savedPayment = insertPaymentResults[0]
 
-    // console.log('🚀 ~ registerParticipant ~ savedParticipant:', savedParticipant.id)
-    // console.log('🚀 ~ registerParticipant ~ savedPayment:', savedPayment.id)
-
     return {
       data: {
         participant: savedParticipant,
