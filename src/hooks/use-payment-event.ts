@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import type { PaymentUpdate } from '@/lib/payments/emit-payment-update'
 
-export function usePaymentStatus(paymentId: string) {
+export function usePaymentEvent(paymentId: string) {
   const [payment, setPayment] = useState<PaymentUpdate | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const maxRetries = 3
@@ -18,6 +18,7 @@ export function usePaymentStatus(paymentId: string) {
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
+        // console.log('🚀 ~ usePaymentStatus ~ useEffect ~ data:', data)
         setPayment(data)
         setRetryCount(0) // Reset retry count on successful message
       }

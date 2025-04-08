@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       const key = `payment-controller:${payment_id}`
       typedGlobalThis[key] = controller
 
-      const message = encoder.encode(`data: {"status": "connecting"\n\n}`)
+      const message = encoder.encode('data: {"status": "connecting"}\n\n')
       controller.enqueue(message)
     },
     cancel() {

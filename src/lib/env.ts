@@ -3,8 +3,8 @@ import 'dotenv/config'
 
 export const env = {
   db: {
-    TURSO_CONNECTION_URL: process.env.TURSO_CONNECTION_URL ?? '',
-    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN ?? '',
+    TURSO_CONNECTION_URL: process.env.TURSO_CONNECTION_URL,
+    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
   },
   mpesa: {
     SANDBOX: process.env.MPESA_SANDBOX,

@@ -8,11 +8,12 @@ import type { RegisterParticipantResponse } from '@/lib/events/types/types'
 
 import { db } from '@/db/db'
 import { participants, payments } from '@/db/schema'
+import { MpesaError } from '@/lib/mpesa/errors'
 import { mpesa } from '@/lib/mpesa/service'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
   const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true }).extend({
-    phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits').max(12, 'Phone number must not exceed 12 digits'),
+    phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits').max(12, 'Phone number must not exceed 12 digits').regex(/^254\d{9}$/, 'Phone number must start with 254 followed by 9 digits'),
   })
   const rawData = {
     firstName: formData.get('firstName')?.toString(),
@@ -40,8 +41,8 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     const transactionDesc = 'Test'
 
     const response = await mpesa.initiateStkPush({
-      Amount: amount,
-      PhoneNumber: phoneNumber,
+      Amount: Number(amount),
+      PhoneNumber: Number(phoneNumber),
       AccountReference: accountReference,
       TransactionDesc: transactionDesc,
     })
@@ -62,7 +63,11 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
       phoneNumber,
       amount,
     }).returning()
+
     const savedPayment = insertPaymentResults[0]
+
+    // console.log('🚀 ~ registerParticipant ~ savedParticipant:', savedParticipant.id)
+    // console.log('🚀 ~ registerParticipant ~ savedPayment:', savedPayment.id)
 
     return {
       data: {
@@ -72,6 +77,12 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     }
   }
   catch (error) {
+    if (error instanceof MpesaError) {
+      return {
+        errorMessage: `MPESA Error: ${error.message} (Code: ${error.code})`,
+      }
+    }
+
     if (error instanceof LibsqlError) {
       throw new TypeError(`Database error: ${error.message}`)
     }
