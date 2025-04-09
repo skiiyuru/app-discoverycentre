@@ -25,7 +25,8 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
               Amount:
               {' '}
               <span className="font-bold">
-                KES
+                KES.
+                {' '}
                 {paymentEvent.amount?.toLocaleString()}
               </span>
             </p>
@@ -74,9 +75,9 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <div className="w-1/4 h-4 bg-zinc-600 animate-pulse" />
-        <div className="w-1/3 h-4 bg-zinc-600 animate-pulse" />
-        <div className="w-1/2 h-4 bg-zinc-600 animate-pulse" />
+        <div className="w-1/2 md:w-1/4 h-4 bg-zinc-600 animate-pulse" />
+        <div className="w-1/3 md:w-1/3 h-4 bg-zinc-600 animate-pulse" />
+        <div className="w-4/5 md:w-1/2 h-4 bg-zinc-600 animate-pulse" />
       </CardContent>
     </>
   )
