@@ -36,7 +36,7 @@ export const payments = sqliteTable('payments', {
   amount: text('amount').notNull(),
 
   mpesaReceiptNumber: text('mpesa_receipt_number').notNull().default(''),
-  transactionDate: text().notNull().default(''),
+  transactionDate: text('transaction_date').notNull().default(''),
   status: text({ enum: [PaymentStatus.Pending, PaymentStatus.Success, PaymentStatus.Failed] }).notNull().default(PaymentStatus.Pending),
 }, table => ([
   index('phone_status_idx').on(table.phoneNumber, table.status),
