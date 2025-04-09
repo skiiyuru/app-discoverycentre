@@ -28,7 +28,7 @@ class MpesaService {
     }
 
     const responseText = await authResponse.text()
-    if (!responseText) {
+    if (!responseText || responseText.trim() === '') {
       throw new MpesaError('M-PESA auth returned empty response', 'EMPTY_RESPONSE')
     }
 
