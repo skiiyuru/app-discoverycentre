@@ -64,8 +64,8 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
 
     // TODO: Replace with real values
     const amount = '1'
-    const accountReference = 'Test'
-    const transactionDesc = 'Test'
+    const accountReference = 'Chess tournament'
+    const transactionDesc = 'Tournament registration'
 
     const response = await mpesa.initiateStkPush({
       Amount: Number(amount),

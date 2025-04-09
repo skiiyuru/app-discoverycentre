@@ -13,13 +13,16 @@ export function usePaymentEvent(paymentId: string) {
     let retryTimeout: ReturnType<typeof setTimeout>
     let eventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
     let isReconnecting = false
-    let delay: string | number | NodeJS.Timeout | undefined
+    let delay: NodeJS.Timeout | undefined
 
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data)
-        setPayment(data)
-        setRetryCount(0) // Reset retry count on successful message
+        // Only update if the new status is not "connecting" or if we don't have a payment yet
+        if (!payment || data.status !== 'connecting') {
+          setPayment(data)
+        }
+        setRetryCount(0)
       }
       catch (error) {
         console.error('Failed to parse message:', error)
@@ -30,28 +33,28 @@ export function usePaymentEvent(paymentId: string) {
       console.error('EventSource failed:', error)
       eventSource.close()
 
-      if (retryCount < maxRetries) {
-        const delay = 2 ** retryCount * 1000 // Exponential backoff
-        console.warn(`Retrying connection in ${delay}ms... (${retryCount + 1}/${maxRetries})`)
+      // Only retry if we haven't received a final status yet
+      if (retryCount < maxRetries && (!payment || (payment.status !== 'success' && payment.status !== 'failed'))) {
+        const retryDelay = 2 ** retryCount * 1000
+        console.warn(`Retrying connection in ${retryDelay}ms... (${retryCount + 1}/${maxRetries})`)
         retryTimeout = setTimeout(() => {
           setRetryCount(prev => prev + 1)
-        }, delay)
+        }, retryDelay)
       }
     }
 
     // Handle network status changes
     const handleOnline = () => {
-      if (isReconnecting)
+      if (isReconnecting || (payment && (payment.status === 'success' || payment.status === 'failed'))) {
         return
+      }
 
       console.warn('Network reconnected, reestablishing SSE connection')
       eventSource.close()
       isReconnecting = true
 
-      // Small delay to ensure network is stable
       delay = setTimeout(() => {
-        const newEventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
-        eventSource = newEventSource
+        eventSource = new EventSource(`/api/payments/sse?payment_id=${paymentId}`)
         isReconnecting = false
       }, 1000)
     }
@@ -61,10 +64,10 @@ export function usePaymentEvent(paymentId: string) {
     return () => {
       eventSource.close()
       clearTimeout(retryTimeout)
-      window.removeEventListener('online', handleOnline)
       clearTimeout(delay)
+      window.removeEventListener('online', handleOnline)
     }
-  }, [paymentId, retryCount])
+  }, [paymentId, retryCount, payment])
 
   return payment
 }
