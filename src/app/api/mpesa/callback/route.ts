@@ -28,11 +28,10 @@ export async function POST(request: NextRequest) {
 
     const { Body: { stkCallback } } = result.data
 
+    const fieldChecks = [eq(payments.merchantRequestId, stkCallback.MerchantRequestID), eq(payments.checkoutRequestId, stkCallback.CheckoutRequestID)]
+
     const payment = await db.query.payments.findFirst({
-      where: and(
-        eq(payments.merchantRequestId, stkCallback.MerchantRequestID),
-        eq(payments.checkoutRequestId, stkCallback.CheckoutRequestID),
-      ),
+      where: and(...fieldChecks),
     })
 
     if (!payment) {
@@ -45,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (!stkCallback.CallbackMetadata) {
       await db.update(payments).set({
         status: PaymentStatus.Failed,
-      }).where(and(eq(payments.merchantRequestId, stkCallback.MerchantRequestID), eq(payments.checkoutRequestId, stkCallback.CheckoutRequestID)))
+      }).where(and(...fieldChecks))
 
       // trigger sse
       emitPaymentUpdate(payment.id, { status: PaymentStatus.Failed, errorMessage: stkCallback.ResultDesc })
@@ -53,7 +52,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ success: true }, { status: 200 })
     }
 
-    const metaData: Record<string, string | number> = {}
+    const metaData: Record<string, string | number | undefined> = {}
     for (const item of stkCallback.CallbackMetadata.Item) {
       metaData[item.Name] = item.Value
     }
@@ -64,11 +63,17 @@ export async function POST(request: NextRequest) {
       status: PaymentStatus.Success,
     }
 
-    await db.update(payments).set(updateData).where(and(eq(payments.merchantRequestId, stkCallback.MerchantRequestID), eq(payments.checkoutRequestId, stkCallback.CheckoutRequestID),
-    ))
+    const results = await db.update(payments).set(updateData).where(and(...fieldChecks)).returning()
+
+    const { amount, status, transactionDate, mpesaReceiptNumber } = results[0]
 
     // trigger sse
-    emitPaymentUpdate(payment.id, updateData)
+    emitPaymentUpdate(payment.id, {
+      status,
+      amount: Number(amount),
+      transactionDate,
+      mpesaReceiptNumber,
+    })
 
     return Response.json({ success: true }, { status: 200 })
   }

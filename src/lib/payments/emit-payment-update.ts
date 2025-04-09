@@ -4,6 +4,7 @@ import { typedGlobalThis } from './types'
 
 export type PaymentUpdate = {
   status: PaymentStatus
+  amount?: number
   mpesaReceiptNumber?: string
   transactionDate?: string
   errorMessage?: string

@@ -13,31 +13,39 @@ export enum PaymentStatus {
   Failed = 'failed',
 }
 
-export type MpesaAuthResponse = {
+export type AuthSuccessResponse = {
   access_token: string
   expires_in: string
 }
 
-export type StkPushRequest = {
-  // BusinessShortCode: string
-  // Password: string
-  // Timestamp: string
-  // TransactionType: TransactionType.Paybill
-  Amount: string
-  // PartyA: string
-  // PartyB: string
-  PhoneNumber: string
-  // CallBackURL: string
+export type StkPushRequestBody = {
+  BusinessShortCode: number
+  Password: string
+  Timestamp: string
+  TransactionType: TransactionType
+  Amount: number
+  PartyA: number
+  PartyB: number
+  PhoneNumber: number
+  CallBackURL: string
   AccountReference: string
   TransactionDesc: string
 }
 
-export type StkPushResponse = {
+export type StkPushUserInput = Pick<StkPushRequestBody, 'PhoneNumber' | 'Amount' | 'AccountReference' | 'TransactionDesc'>
+
+export type StkPushSuccessResponse = {
   MerchantRequestID: string
   CheckoutRequestID: string
   ResponseCode: string
   ResponseDescription: string
   CustomerMessage: string
+}
+
+export type StkPushErrorResponse = {
+  requestId: string
+  errorCode: string
+  errorMessage: string
 }
 
 export type StkCallbackResponse = z.infer<typeof callbackSchema>

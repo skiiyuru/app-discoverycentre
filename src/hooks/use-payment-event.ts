@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import type { PaymentUpdate } from '@/lib/payments/emit-payment-update'
 
-export function usePaymentStatus(paymentId: string) {
+export function usePaymentEvent(paymentId: string) {
   const [payment, setPayment] = useState<PaymentUpdate | null>(null)
   const [retryCount, setRetryCount] = useState(0)
   const maxRetries = 3

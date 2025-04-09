@@ -11,7 +11,7 @@ export const callbackSchema = z.object({
         .object({
           Item: z.array(z.object({
             Name: z.string(),
-            Value: z.union([z.string(), z.number()]),
+            Value: z.union([z.string(), z.number()]).optional(),
           })),
         })
         .optional(),
