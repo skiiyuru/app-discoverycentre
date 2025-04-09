@@ -40,7 +40,7 @@ class MpesaService {
     }
     catch (error) {
       console.error('Failed to parse M-PESA auth response:', responseText)
-      throw new Error(`Failed to parse M-PESA auth response: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new MpesaError(`Failed to parse M-PESA auth response: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PARSE_ERROR')
     }
   }
 
