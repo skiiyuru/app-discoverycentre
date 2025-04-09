@@ -141,6 +141,86 @@ As the application grows, consider these alternatives:
 
 The current SSE implementation serves as a foundation that can be replaced with minimal changes to the client-side code when needed.
 
+## Database Indexing Strategy
+
+### Current Implementation
+
+1. **Participant Search Index**
+
+   ```typescript
+   index('participant_name_idx').on(table.firstName, table.lastName)
+   ```
+
+   - Optimizes participant lookup by name
+   - Column order based on query patterns
+
+2. **Payment Tracking Indexes**
+   ```typescript
+   uniqueIndex('request_id_idx').on(table.merchantRequestId, table.checkoutRequestId)
+   index('phone_status_idx').on(table.phoneNumber, table.status)
+   ```
+   - Ensures M-PESA transaction uniqueness
+   - Optimizes payment status lookups
+   - Composite indexes match common query patterns
+
+### Design Considerations
+
+1. **Index Selection**
+
+   - Indexes match actual query patterns
+   - Avoided indexes on rarely queried columns
+   - Considered column cardinality for composite indexes
+
+2. **Performance Trade-offs**
+
+   - Write overhead vs read performance
+   - Storage space vs query speed
+   - Index maintenance costs
+
+3. **SQLite/Turso Specific**
+   - Automatic PRIMARY KEY indexing
+   - Single index usage per table per query
+   - Implicit indexes from UNIQUE constraints
+
+### Future Considerations
+
+1. **Index Performance Monitoring**
+
+   ```typescript
+   // TODO: Implement monitoring for:
+   - Index usage statistics
+   - Query execution plans
+   - Index size growth
+   - Write performance impact
+   ```
+
+2. **Maintenance Strategy**
+
+   - Regular index usage analysis
+   - Periodic index rebuilding
+   - Unused index cleanup
+   - Query pattern changes monitoring
+
+3. **Scaling Considerations**
+   - Index size vs database growth
+   - Write-heavy vs read-heavy operations
+   - Cache strategy integration
+   - Potential for selective indexing
+
+### Implementation Example
+
+```typescript
+// Current optimal query pattern
+const payment = await db.query.payments.findFirst({
+  where: and(
+    eq(payments.merchantRequestId, requestId),
+    eq(payments.checkoutRequestId, checkoutId)
+  )
+})
+```
+
+This documentation will be updated as we implement monitoring and gather performance metrics.
+
 ## Future Considerations
 
 While starting with this simpler approach, the architecture allows for:

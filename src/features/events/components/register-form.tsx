@@ -62,7 +62,7 @@ export default function RegisterForm() {
       </CardHeader>
       <CardContent>
         <form action={action} autoComplete="on">
-          <div className="grid grid-cols-2 gap-4 w-full pb-6">
+          <div className="grid sm:grid-cols-2 gap-4 w-full pb-6">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="firstName">First Name</Label>
               <Input

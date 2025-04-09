@@ -1,6 +1,7 @@
 'use server'
 
 import { LibsqlError } from '@libsql/client'
+import { and, eq } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 
@@ -10,6 +11,7 @@ import { db } from '@/db/db'
 import { participants, payments } from '@/db/schema'
 import { MpesaError } from '@/lib/mpesa/errors'
 import { mpesa } from '@/lib/mpesa/service'
+import { PaymentStatus } from '@/lib/mpesa/types'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
   const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true }).extend({
@@ -32,9 +34,34 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     }
   }
 
-  const { phoneNumber, ...insertParticipantValues } = result.data
+  const { phoneNumber, ...participantInput } = result.data
+
+  const participantFilters = [eq(participants.firstName, participantInput.firstName), eq(participants.lastName, participantInput.lastName)]
+  const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, PaymentStatus.Success)]
 
   try {
+    // check for existing registration
+    const existingParticipant = await db.query.participants.findFirst({
+      where: and(...participantFilters),
+      columns: {
+        id: true,
+      },
+      with: {
+        payments: {
+          where: and(...paymentFilters),
+          columns: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    if (existingParticipant?.payments.length) {
+      return {
+        errorMessage: 'A participant with these details is already registered',
+      }
+    }
+
     // TODO: Replace with real values
     const amount = '1'
     const accountReference = 'Test'
@@ -53,18 +80,23 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
       }
     }
 
-    const insertParticipantResults = await db.insert(participants).values(insertParticipantValues).returning()
-    const savedParticipant = insertParticipantResults[0]
+    const [savedParticipant, savedPayment] = await db.transaction(async (tx) => {
+      const [participant] = await tx.insert(participants)
+        .values(participantInput)
+        .returning()
 
-    const insertPaymentResults = await db.insert(payments).values({
-      participantId: savedParticipant.id,
-      checkoutRequestId: response.CheckoutRequestID,
-      merchantRequestId: response.MerchantRequestID,
-      phoneNumber,
-      amount,
-    }).returning()
+      const [payment] = await tx.insert(payments)
+        .values({
+          participantId: participant.id,
+          checkoutRequestId: response.CheckoutRequestID,
+          merchantRequestId: response.MerchantRequestID,
+          phoneNumber,
+          amount,
+        })
+        .returning()
 
-    const savedPayment = insertPaymentResults[0]
+      return [participant, payment]
+    })
 
     return {
       data: {
@@ -89,6 +121,4 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
   }
 }
 
-// TODO: fix double registration
 // TODO: fix losing form state when field errors occur
-// TODO: verify incoming callback data (MerchantRequestID & CheckoutRequestID) against what's in the db
