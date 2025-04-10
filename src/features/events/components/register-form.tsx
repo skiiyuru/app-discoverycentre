@@ -57,7 +57,7 @@ export default function RegisterForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Register for tornament</CardTitle>
+        <CardTitle>Register for tournament</CardTitle>
         <CardDescription>Enter a participant's details and pay using MPESA.</CardDescription>
       </CardHeader>
       <CardContent>
