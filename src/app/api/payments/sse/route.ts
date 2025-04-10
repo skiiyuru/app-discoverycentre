@@ -1,5 +1,10 @@
 import type { NextRequest } from 'next/server'
 
+import { eq } from 'drizzle-orm'
+
+import { db } from '@/db/db'
+import { payments } from '@/db/schema'
+import { PaymentStatus } from '@/lib/mpesa/types'
 import { typedGlobalThis } from '@/lib/payments/types'
 
 export const dynamic = 'force-dynamic'
@@ -14,12 +19,31 @@ export async function GET(request: NextRequest) {
 
   const encoder = new TextEncoder()
   const stream = new ReadableStream({
-    start(controller) {
+    start: async (controller) => {
       const key = `payment-controller:${payment_id}`
       typedGlobalThis[key] = controller
 
-      const message = encoder.encode('data: {"status": "connecting"}\n\n')
-      controller.enqueue(message)
+      // Check current payment status
+      const payment = await db.query.payments.findFirst({
+        where: eq(payments.id, payment_id),
+        columns: {
+          status: true,
+          amount: true,
+          mpesaReceiptNumber: true,
+          transactionDate: true,
+        },
+      })
+
+      // Only send "connecting" if payment is pending or not found
+      if (!payment || payment.status === PaymentStatus.Pending) {
+        const message = encoder.encode('data: {"status": "connecting"}\n\n')
+        controller.enqueue(message)
+      }
+      else {
+        // Send current payment state
+        const message = encoder.encode(`data: ${JSON.stringify(payment)}\n\n`)
+        controller.enqueue(message)
+      }
     },
     cancel() {
       const key = `payment-controller:${payment_id}`
