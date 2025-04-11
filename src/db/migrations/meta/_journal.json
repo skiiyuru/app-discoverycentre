@@ -43,6 +43,20 @@
       "when": 1744199761725,
       "tag": "0005_broad_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1744280003997,
+      "tag": "0006_groovy_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1744295615767,
+      "tag": "0007_stale_living_lightning",
+      "breakpoints": true
     }
   ]
 }

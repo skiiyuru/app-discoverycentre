@@ -1,9 +1,8 @@
 import type { participants, payments } from '@/db/schema'
 
-export enum Gender {
-  Male = 'male',
-  Female = 'female',
-}
+import type { CATEGORIES, GENDERS } from './constants'
+
+export type Gender = (typeof GENDERS)[number]
 
  type SelectParticipant = typeof participants.$inferSelect
  type InsertParticipant = typeof participants.$inferInsert
@@ -23,3 +22,5 @@ export type RegisterParticipantResponse = {
   errors?: InsertParticipantErrors
   errorMessage?: string
 }
+
+export type Category = (typeof CATEGORIES)[number]
