@@ -4,7 +4,7 @@ import { Loader2, Wallet } from 'lucide-react'
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import type { RegisterParticipantResponse } from '@/lib/events/types'
+import type { RegisterParticipantResponse } from '@/lib/types'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import PaymentUpdateContent from '@/features/payments/components/payment-update-content'
-import { CATEGORIES } from '@/lib/events/constants'
+import { CATEGORIES } from '@/lib/constants'
 
 import { registerParticipant } from '../actions/register-participant'
 

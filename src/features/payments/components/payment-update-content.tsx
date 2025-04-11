@@ -2,7 +2,6 @@ import { CircleCheck, CircleX, Loader2, RefreshCwOff } from 'lucide-react'
 
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import usePaymentChannel from '@/hooks/use-payment-channel'
-import { PaymentStatus } from '@/lib/mpesa/types'
 import { formatTransactionDate } from '@/lib/utils'
 
 export default function PaymentUpdateContent({ paymentId }: { paymentId: string }) {
@@ -26,7 +25,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
     )
   }
 
-  if (update && update.status === PaymentStatus.Success) {
+  if (update && update.status === 'success') {
     return (
       <>
         <CardHeader>
@@ -64,7 +63,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
     )
   }
 
-  if (update && update.status === PaymentStatus.Failed) {
+  if (update && update.status === 'failed') {
     return (
       <>
         <CardHeader>

@@ -4,12 +4,13 @@ import { LibsqlError } from '@libsql/client'
 import { and, eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
+import type { PaymentUpdate } from '@/lib/types'
+
 import { db } from '@/db/db'
 import { payments } from '@/db/schema'
-import { callbackSchema } from '@/lib/mpesa/schemas'
-import { PaymentStatus } from '@/lib/mpesa/types'
 import { publishPaymentUpdate } from '@/lib/payments/publish-update'
 import { redisPublisher } from '@/lib/upstash-redis'
+import { callbackSchema } from '@/lib/validation-schemas'
 
 export async function POST(request: NextRequest) {
   if (!redisPublisher) {
@@ -48,11 +49,11 @@ export async function POST(request: NextRequest) {
 
     if (!stkCallback.CallbackMetadata) {
       await db.update(payments).set({
-        status: PaymentStatus.Failed,
+        status: 'failed',
       }).where(and(...fieldChecks))
 
       // Publish payment failed
-      await publishPaymentUpdate(payment.id, { status: PaymentStatus.Failed, errorMessage: stkCallback.ResultDesc })
+      await publishPaymentUpdate(payment.id, { status: 'failed', errorMessage: stkCallback.ResultDesc })
 
       return NextResponse.json({ success: 'true' }, { status: 200 })
     }
@@ -62,10 +63,10 @@ export async function POST(request: NextRequest) {
       metaData[item.Name] = item.Value
     }
 
-    const updateData = {
+    const updateData: PaymentUpdate = {
+      status: 'success',
       mpesaReceiptNumber: (metaData.MpesaReceiptNumber) as string,
-      transactionDate: `${metaData.TransactionDate}`,
-      status: PaymentStatus.Success,
+      transactionDate: (metaData.TransactionDate) as string,
     }
 
     const [updatedPaymentRecord] = await db.update(payments).set(updateData).where(and(...fieldChecks)).returning()
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
     // Publish payment success
     await publishPaymentUpdate(payment.id, {
       status,
-      amount: Number(amount),
+      amount,
       transactionDate,
       mpesaReceiptNumber,
     })

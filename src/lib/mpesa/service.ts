@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer'
 
-import type { AuthSuccessResponse, StkPushErrorResponse, StkPushRequestBody, StkPushSuccessResponse, StkPushUserInput } from './types'
+import type { AuthSuccessResponse, StkPushErrorResponse, StkPushRequestBody, StkPushSuccessResponse, StkPushUserInput } from '../types'
 
 import { config } from '../config'
-import { MpesaError } from './errors'
-import { TransactionType } from './types'
+import { MpesaError } from '../errors'
+import { TransactionType } from '../types'
 
 class MpesaService {
   private accessToken: string | null = null

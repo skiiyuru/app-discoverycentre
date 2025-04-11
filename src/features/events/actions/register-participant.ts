@@ -3,14 +3,13 @@
 import { LibsqlError } from '@libsql/client'
 import { and, eq } from 'drizzle-orm'
 
-import type { RegisterParticipantResponse } from '@/lib/events/types'
+import type { RegisterParticipantResponse } from '@/lib/types'
 
 import { db } from '@/db/db'
 import { participants, payments } from '@/db/schema'
-import { insertParticipantSchema } from '@/lib/events/schemas'
-import { MpesaError } from '@/lib/mpesa/errors'
+import { MpesaError } from '@/lib/errors'
 import { mpesa } from '@/lib/mpesa/service'
-import { PaymentStatus } from '@/lib/mpesa/types'
+import { insertParticipantSchema } from '@/lib/validation-schemas'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
   const rawData = {
@@ -34,7 +33,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
   const { phoneNumber, ...participantInput } = result.data
 
   const participantFilters = [eq(participants.firstName, participantInput.firstName), eq(participants.lastName, participantInput.lastName)]
-  const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, PaymentStatus.Success)]
+  const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, 'success')]
 
   try {
     // check for existing registration

@@ -3,8 +3,7 @@ import type { NextRequest } from 'next/server'
 import Redis from 'ioredis'
 import { NextResponse } from 'next/server'
 
-import type { ConnectionMessage } from '@/features/events/types'
-import type { PaymentUpdateChannel } from '@/lib/payments/types'
+import type { ConnectionMessage, PaymentUpdateChannel } from '@/lib/types'
 
 import { config } from '@/lib/config'
 

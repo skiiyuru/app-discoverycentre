@@ -1,44 +1,34 @@
-import { relations, sql } from 'drizzle-orm'
-import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core'
-import { randomUUID } from 'node:crypto'
+import { relations } from 'drizzle-orm'
+import { index, numeric, pgTable, smallint, timestamp, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core'
 
-import { CATEGORIES, GENDERS } from '@/lib/events/constants'
-import { PaymentStatus } from '@/lib/mpesa/types'
+import { CATEGORIES, GENDERS, PAYMENT_STATUSES } from '@/lib/constants'
 
-function generateId() {
-  return text('id').primaryKey().$default(() => randomUUID())
-}
+export const participants = pgTable('participants', {
+  id: uuid().defaultRandom().primaryKey(),
+  createdAt: timestamp({ mode: 'date' }).defaultNow().notNull(),
 
-function createdAt() {
-  return text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
-}
-
-export const participants = sqliteTable('participants', {
-  id: generateId(),
-  createdAt: createdAt(),
-
-  firstName: text('first_name', { length: 25 }).notNull(),
-  lastName: text('last_name', { length: 25 }).notNull(),
-  gender: text('gender', { enum: GENDERS }).notNull(),
-  age: integer('age').notNull(),
-  category: text('category', { enum: CATEGORIES }).notNull(),
+  firstName: varchar({ length: 25 }).notNull(),
+  lastName: varchar({ length: 25 }).notNull(),
+  gender: varchar({ length: 6, enum: GENDERS }).notNull(),
+  age: smallint().notNull(),
+  category: varchar({ length: 2, enum: CATEGORIES }).notNull(),
 }, table => ([
   index('name_idx').on(table.lastName, table.firstName),
 ]))
 
-export const payments = sqliteTable('payments', {
-  id: generateId(),
-  createdAt: createdAt(),
+export const payments = pgTable('payments', {
+  id: uuid().defaultRandom().primaryKey(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow(),
 
-  participantId: text('participant_id').notNull(),
-  checkoutRequestId: text('checkout_request_id').notNull(),
-  merchantRequestId: text('merchant_request_id').notNull(),
-  phoneNumber: text('phone_number', { length: 12 }).notNull(),
-  amount: text('amount').notNull(),
+  participantId: uuid().notNull(),
+  checkoutRequestId: varchar({ length: 50 }).notNull(),
+  merchantRequestId: varchar({ length: 50 }).notNull(),
+  phoneNumber: varchar({ length: 12 }).notNull(),
+  amount: numeric().notNull(),
 
-  mpesaReceiptNumber: text('mpesa_receipt_number').notNull().default(''),
-  transactionDate: text('transaction_date').notNull().default(''),
-  status: text('status', { enum: [PaymentStatus.Pending, PaymentStatus.Success, PaymentStatus.Failed] }).notNull().default(PaymentStatus.Pending),
+  mpesaReceiptNumber: varchar({ length: 20 }).notNull().default(''),
+  transactionDate: timestamp({ mode: 'string' }).notNull().defaultNow(),
+  status: varchar({ enum: PAYMENT_STATUSES }).notNull().default('pending'),
 }, table => ([
   index('phone_status_idx').on(table.phoneNumber, table.status),
   uniqueIndex('request_id_idx').on(table.checkoutRequestId, table.merchantRequestId),
