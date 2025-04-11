@@ -2,14 +2,21 @@ import type { NextRequest } from 'next/server'
 
 import { LibsqlError } from '@libsql/client'
 import { and, eq } from 'drizzle-orm'
+import { NextResponse } from 'next/server'
 
 import { db } from '@/db/db'
 import { payments } from '@/db/schema'
 import { callbackSchema } from '@/lib/mpesa/schemas'
 import { PaymentStatus } from '@/lib/mpesa/types'
-import { emitPaymentUpdate } from '@/lib/payments/emit-payment-update'
+import { publishPaymentUpdate } from '@/lib/payments/publish-update'
+import { redisPublisher } from '@/lib/upstash-redis'
 
 export async function POST(request: NextRequest) {
+  if (!redisPublisher) {
+    console.error('Redis publisher client is not available. Check environment variables.')
+    return NextResponse.json({ ResultCode: 1, ResultDesc: 'Failed: Internal Server Configuration Error' }, { status: 500 })
+  }
+
   try {
     const payload = await request.json()
     const result = callbackSchema.safeParse(payload)
@@ -21,8 +28,7 @@ export async function POST(request: NextRequest) {
       })
 
       return Response.json({
-        success: false,
-        message: 'Invalid callback payload',
+        error: 'Invalid callback payload',
       }, { status: 400 })
     }
 
@@ -36,8 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (!payment) {
       return Response.json({
-        success: false,
-        message: 'Payment record not found',
+        error: 'Payment record not found',
       }, { status: 404 })
     }
 
@@ -46,10 +51,10 @@ export async function POST(request: NextRequest) {
         status: PaymentStatus.Failed,
       }).where(and(...fieldChecks))
 
-      // trigger sse
-      emitPaymentUpdate(payment.id, { status: PaymentStatus.Failed, errorMessage: stkCallback.ResultDesc })
+      // Publish payment failed
+      await publishPaymentUpdate(payment.id, { status: PaymentStatus.Failed, errorMessage: stkCallback.ResultDesc })
 
-      return Response.json({ success: true }, { status: 200 })
+      return NextResponse.json({ success: 'true' }, { status: 200 })
     }
 
     const metaData: Record<string, string | number | undefined> = {}
@@ -63,33 +68,29 @@ export async function POST(request: NextRequest) {
       status: PaymentStatus.Success,
     }
 
-    const results = await db.update(payments).set(updateData).where(and(...fieldChecks)).returning()
+    const [updatedPaymentRecord] = await db.update(payments).set(updateData).where(and(...fieldChecks)).returning()
 
-    const { amount, status, transactionDate, mpesaReceiptNumber } = results[0]
+    const { amount, status, transactionDate, mpesaReceiptNumber } = updatedPaymentRecord
 
-    // trigger sse
-    emitPaymentUpdate(payment.id, {
+    // Publish payment success
+    await publishPaymentUpdate(payment.id, {
       status,
       amount: Number(amount),
       transactionDate,
       mpesaReceiptNumber,
     })
 
-    return Response.json({ success: true }, { status: 200 })
+    return NextResponse.json({ success: 'true' }, { status: 200 })
   }
   catch (error) {
     if (error instanceof LibsqlError) {
       throw new TypeError(`Database error: ${error.message}`)
     }
 
-    // Log unexpected errors
     console.error('M-PESA callback processing error:', error)
 
-    // Always return success to M-PESA to prevent retries
-    // But use 500 status to trigger our error monitoring
     return Response.json({
-      success: true,
-      error: 'Internal processing error',
+      error: 'Something went wrong while processing the mpesa callback',
     }, { status: 500 })
   }
 }

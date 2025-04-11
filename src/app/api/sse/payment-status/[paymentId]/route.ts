@@ -1,0 +1,109 @@
+import type { NextRequest } from 'next/server'
+
+import Redis from 'ioredis'
+import { NextResponse } from 'next/server'
+
+import type { ConnectionMessage } from '@/features/events/types'
+import type { PaymentUpdateChannel } from '@/lib/payments/types'
+
+import { config } from '@/lib/config'
+
+export async function GET(req: NextRequest, { params }: { params: { paymentId: string } }) {
+  const { paymentId } = params
+
+  if (!paymentId) {
+    return NextResponse.json({ error: 'Payment Id must be included' }, { status: 400 })
+  }
+
+  if (!config.ioredis.URL) {
+    return NextResponse.json({ error: 'Missing url configuration for ioredis' }, { status: 500 })
+  }
+
+  const subscriber = new Redis(config.ioredis.URL, {
+    tls: { rejectUnauthorized: false },
+    lazyConnect: true,
+    maxRetriesPerRequest: null,
+    connectTimeout: 60 * 1000 * 1.5,
+  })
+
+  const channel: PaymentUpdateChannel = `paymentId:${paymentId}`
+
+  const stream = new ReadableStream({
+    start: async (controller) => {
+      // try to connect client
+      try {
+        await subscriber.connect()
+        console.log(`✅ Client "${paymentId}" connected to channel "${channel}"`)
+        console.log(`Redis connected for subscription on channel: ${channel}`)
+      }
+      catch (error) {
+        console.error(`❌ Failed to connect client "${paymentId}"\n`, error)
+        controller.error(new Error('Failed to connect to event source'))
+
+        // Attempt cleanup
+        try {
+          subscriber.disconnect()
+        }
+        catch {}
+        return
+      }
+
+      // Subscribe to the specific Redis channel
+      await subscriber.subscribe(channel, (error, count) => {
+        if (error) {
+          console.error(`❌ Failed to subscribe to channel "${channel}":\n`, error)
+          controller.error(new Error('Subscription failed'))
+          // Attempt cleanup
+          try {
+            subscriber.disconnect()
+          }
+          catch {}
+          return
+        }
+
+        console.log(`✅ Subscribed successfully to channel "${channel}". Count: ${count}`)
+        // Send a confirmation event (optional)
+        const connectionMessage: ConnectionMessage = { status: 'success' }
+        controller.enqueue(`event: connected\ndata: ${JSON.stringify(connectionMessage)}\n\n`)
+      })
+
+      // Listen for messages on the subscribed channel
+      subscriber.on('message', (receivedChannel, message) => {
+        console.log(`Received message from Redis channel "${receivedChannel}":`, message)
+        if (receivedChannel === channel) {
+          // Format as SSE message: data: <json string>\n\n
+          // You can also add 'event: <event_name>\n' if you want named events
+          controller.enqueue(`event: paymentUpdate\ndata: ${message}\n\n`)
+        }
+      })
+
+      // Handle Redis errors during subscription
+      subscriber.on('error', (error) => {
+        console.error(`Redis subscriber error on channel ${channel}:\n`, error)
+        // Close the stream on Redis error
+        controller.error(error)
+        // Attempt cleanup
+        try {
+          subscriber.disconnect()
+        }
+        catch {}
+      })
+    },
+    cancel: () => {
+      // Clean up the 'subscriber' instance specific to this request
+      console.log(`SSE Client disconnected: ${paymentId}. Cleaning up Redis.`)
+      subscriber.unsubscribe(channel)
+      subscriber.disconnect()
+    },
+  })
+
+  // Return the stream response with appropriate headers for SSE
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform', // Ensure no caching or buffering by proxies
+      'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no', // Nginx: Prevent buffering
+    },
+  })
+}

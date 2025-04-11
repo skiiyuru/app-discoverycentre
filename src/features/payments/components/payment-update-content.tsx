@@ -1,21 +1,39 @@
-import { CircleCheck, CircleX, Loader2 } from 'lucide-react'
+import { CircleCheck, CircleX, Loader2, RefreshCwOff } from 'lucide-react'
 
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { usePaymentEvent } from '@/hooks/use-payment-event'
+import usePaymentChannel from '@/hooks/use-payment-channel'
 import { PaymentStatus } from '@/lib/mpesa/types'
 import { formatTransactionDate } from '@/lib/utils'
 
 export default function PaymentUpdateContent({ paymentId }: { paymentId: string }) {
-  const paymentEvent = usePaymentEvent(paymentId)
+  const [update, connectionStatus, error] = usePaymentChannel(paymentId)
 
-  if (paymentEvent && paymentEvent.status === PaymentStatus.Success) {
+  if (error || connectionStatus === 'failed') {
+    return (
+      <>
+        <CardHeader>
+          <CardTitle>
+            <span className="flex gap-2 items-center">
+              <RefreshCwOff className="text-red-400" />
+              Something went wrong while attempting to get update
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p aria-live="assertive">{error}</p>
+        </CardContent>
+      </>
+    )
+  }
+
+  if (update && update.status === PaymentStatus.Success) {
     return (
       <>
         <CardHeader>
           <CardTitle>
             <span className="flex gap-2 items-center">
               <CircleCheck className="text-green-400" />
-              {`Payment ${paymentEvent.status}`}
+              {`Payment ${update.status}`}
             </span>
           </CardTitle>
         </CardHeader>
@@ -27,18 +45,18 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
               <span className="font-bold">
                 KES.
                 {' '}
-                {paymentEvent.amount?.toLocaleString()}
+                {update.amount?.toLocaleString()}
               </span>
             </p>
             <p aria-label="MPESA Receipt Information">
               MPESA receipt number:
               {' '}
-              <span className="font-bold">{paymentEvent.mpesaReceiptNumber}</span>
+              <span className="font-bold">{update.mpesaReceiptNumber}</span>
             </p>
             <p aria-label="Transaction Date Information">
               Transaction date:
               {' '}
-              <span className="font-bold">{formatTransactionDate(paymentEvent.transactionDate)}</span>
+              <span className="font-bold">{formatTransactionDate(update.transactionDate)}</span>
             </p>
           </div>
         </CardContent>
@@ -46,19 +64,19 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
     )
   }
 
-  if (paymentEvent && paymentEvent.status === PaymentStatus.Failed) {
+  if (update && update.status === PaymentStatus.Failed) {
     return (
       <>
         <CardHeader>
           <CardTitle>
             <span className="flex gap-2 items-center">
               <CircleX className="text-red-400" />
-              {`Payment ${paymentEvent.status}`}
+              {`Payment ${update.status}`}
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p aria-live="assertive">{paymentEvent.errorMessage || 'An error occurred with your payment.'}</p>
+          <p aria-live="assertive">{update.errorMessage || 'An error occurred with your payment.'}</p>
         </CardContent>
       </>
     )
@@ -70,7 +88,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
         <CardTitle>
           <span className="flex gap-2 items-center">
             <Loader2 className="animate-spin" />
-            Processing payment...
+            {connectionStatus === 'pending' ? 'Connecting...' : `Confirming payment...`}
           </span>
         </CardTitle>
       </CardHeader>

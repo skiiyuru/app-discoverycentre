@@ -81,65 +81,25 @@ src/
 
 ## Real-time Updates Implementation
 
-### Server-Sent Events (SSE)
+### Redis-based SSE Architecture
 
-Current implementation uses SSE for real-time payment status updates with the following architecture:
+Current implementation uses Redis Pub/Sub for real-time payment status updates:
 
-```plaintext
-M-PESA Callback → Server Action → SSE → Client Component
-```
+1. **Publisher** (`@upstash/redis`)
 
-#### Implementation Details
+   - Handles M-PESA callback events
+   - Publishes to payment-specific channels
 
-- SSE endpoint using Edge Runtime
-- `globalThis` for storing stream controllers
-- Custom hook for client-side consumption
-- Type-safe event emissions
+2. **Subscriber** (`ioredis`)
 
-#### Current Approach Limitations
+   - Manages SSE connections
+   - Subscribes to payment channels
+   - Handles client disconnections
 
-The current implementation uses `globalThis` as a temporary store for stream controllers, which has several limitations:
-
-1. **Memory-based Storage**
-
-   - Doesn't persist across server restarts
-   - Controllers are lost if the server crashes
-   - Not suitable for serverless environments
-
-2. **Scalability Constraints**
-
-   - Doesn't work across multiple server instances
-   - No built-in cleanup mechanism
-   - Memory usage grows with concurrent connections
-
-3. **Development-friendly Trade-offs**
-   - Simple to implement and understand
-   - Works well for prototyping and development
-   - Sufficient for current scale
-
-#### Future Scaling Options
-
-As the application grows, consider these alternatives:
-
-1. **Redis-based Solution**
-
-   ```typescript
-   // Store controller references in Redis
-   // while keeping real-time capabilities
-   ```
-
-2. **Alternative Technologies**
-
-   - WebSocket for bidirectional communication
-   - Pusher for managed real-time infrastructure
-   - Socket.io for more complex real-time features
-
-3. **Message Queues**
-   - Redis Pub/Sub for distributed events
-   - Apache Kafka for high-scale scenarios
-   - Amazon SQS/SNS for cloud-native approach
-
-The current SSE implementation serves as a foundation that can be replaced with minimal changes to the client-side code when needed.
+3. **Error Handling**
+   - Automatic cleanup on errors
+   - Connection timeouts
+   - Graceful degradation
 
 ## Database Indexing Strategy
 
