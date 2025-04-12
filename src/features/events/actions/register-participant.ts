@@ -1,6 +1,5 @@
 'use server'
-
-import { LibsqlError } from '@libsql/client'
+import { NeonDbError } from '@neondatabase/serverless'
 import { and, eq } from 'drizzle-orm'
 
 import type { RegisterParticipantResponse } from '@/lib/types'
@@ -112,7 +111,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
         errorMessage: `MPESA Error: ${error.message} (Code: ${error.code})`,
       }
     }
-    else if (error instanceof LibsqlError) {
+    else if (error instanceof NeonDbError) {
       console.error('Database error:', {
         message: error.message,
         code: error.code,

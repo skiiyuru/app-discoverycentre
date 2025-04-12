@@ -1,9 +1,7 @@
-import { neon } from '@neondatabase/serverless'
-import { drizzle } from 'drizzle-orm/neon-http'
+import { drizzle } from 'drizzle-orm/neon-serverless'
+import ws from 'ws'
 
 import * as schema from '@/db/schema'
 import { config } from '@/lib/config'
 
-const sql = neon(config.db.URL)
-
-export const db = drizzle({ client: sql, casing: 'snake_case', schema })
+export const db = drizzle({ connection: config.db.URL, ws, casing: 'snake_case', schema })

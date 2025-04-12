@@ -7,8 +7,8 @@ import type { ConnectionMessage, PaymentUpdateChannel } from '@/lib/types'
 
 import { config } from '@/lib/config'
 
-export async function GET(req: NextRequest, { params }: { params: { paymentId: string } }) {
-  const { paymentId } = params
+export async function GET(req: NextRequest, { params }: { params: Promise<{ paymentId: string }> }) {
+  const { paymentId } = await params
 
   if (!paymentId) {
     return NextResponse.json({ error: 'Payment Id must be included' }, { status: 400 })

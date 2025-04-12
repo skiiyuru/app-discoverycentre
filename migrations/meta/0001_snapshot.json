@@ -1,6 +1,6 @@
 {
-  "id": "d8231f79-4dc0-4208-bfd9-fab1eb4bccae",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "0fe31d8d-1c90-4145-92aa-765d28f28f9c",
+  "prevId": "d8231f79-4dc0-4208-bfd9-fab1eb4bccae",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -17,10 +17,10 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "varchar(14)",
           "primaryKey": false,
           "notNull": true,
-          "default": "now()"
+          "default": "TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')"
         },
         "first_name": {
           "name": "first_name",
@@ -96,10 +96,10 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp",
+          "type": "varchar(14)",
           "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
+          "notNull": true,
+          "default": "TO_CHAR(NOW(), 'YYYYMMDDHH24MISS')"
         },
         "participant_id": {
           "name": "participant_id",
@@ -140,10 +140,10 @@
         },
         "transaction_date": {
           "name": "transaction_date",
-          "type": "timestamp",
+          "type": "varchar(14)",
           "primaryKey": false,
           "notNull": true,
-          "default": "now()"
+          "default": "''"
         },
         "status": {
           "name": "status",

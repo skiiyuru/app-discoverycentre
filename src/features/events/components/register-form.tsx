@@ -72,7 +72,6 @@ export default function RegisterForm() {
                 name="firstName"
                 placeholder="Grace"
                 required
-                pattern="[A-Za-z\s-]+"
                 minLength={3}
                 maxLength={25}
                 autoComplete="given-name"
@@ -92,7 +91,6 @@ export default function RegisterForm() {
                 name="lastName"
                 placeholder="Brooks"
                 required
-                pattern="[A-Za-z\s-]+"
                 minLength={3}
                 maxLength={25}
                 autoComplete="family-name"

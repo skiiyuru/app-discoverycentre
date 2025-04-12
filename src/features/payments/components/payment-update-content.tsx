@@ -1,11 +1,14 @@
 import { CircleCheck, CircleX, Loader2, RefreshCwOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import usePaymentChannel from '@/hooks/use-payment-channel'
 import { formatTransactionDate } from '@/lib/utils'
 
 export default function PaymentUpdateContent({ paymentId }: { paymentId: string }) {
   const [update, connectionStatus, error] = usePaymentChannel(paymentId)
+  const router = useRouter()
 
   if (error || connectionStatus === 'failed') {
     return (
@@ -14,7 +17,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
           <CardTitle>
             <span className="flex gap-2 items-center">
               <RefreshCwOff className="text-red-400" />
-              Something went wrong while attempting to get update
+              Something went wrong while attempting to get an update.
             </span>
           </CardTitle>
         </CardHeader>
@@ -59,6 +62,9 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
             </p>
           </div>
         </CardContent>
+        <CardFooter>
+          <Button className="w-full py-4" onClick={() => router.refresh()}>Make another payment</Button>
+        </CardFooter>
       </>
     )
   }
@@ -77,6 +83,9 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
         <CardContent>
           <p aria-live="assertive">{update.errorMessage || 'An error occurred with your payment.'}</p>
         </CardContent>
+        <CardFooter>
+          <Button className="w-full py-4" onClick={() => router.refresh()}>Try again</Button>
+        </CardFooter>
       </>
     )
   }

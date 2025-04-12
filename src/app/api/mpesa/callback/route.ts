@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 
-import { LibsqlError } from '@libsql/client'
+import { NeonDbError } from '@neondatabase/serverless'
 import { and, eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: 'true' }, { status: 200 })
   }
   catch (error) {
-    if (error instanceof LibsqlError) {
+    if (error instanceof NeonDbError) {
       throw new TypeError(`Database error: ${error.message}`)
     }
 

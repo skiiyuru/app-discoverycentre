@@ -11,4 +11,5 @@ export default {
   },
   verbose: true,
   strict: true,
+  casing: 'snake_case',
 } satisfies Config
