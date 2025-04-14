@@ -53,13 +53,13 @@ class MpesaService {
     const password = Buffer.from(passwordString).toString('base64')
 
     const body: StkPushRequestBody = {
-      BusinessShortCode: Number(config.mpesa.BUSINESS_SHORTCODE),
+      BusinessShortCode: config.mpesa.BUSINESS_SHORTCODE,
       Password: password,
       Timestamp: timestamp,
       TransactionType: TransactionType.Paybill,
       Amount,
       PartyA: PhoneNumber,
-      PartyB: Number(config.mpesa.BUSINESS_SHORTCODE),
+      PartyB: config.mpesa.BUSINESS_SHORTCODE,
       PhoneNumber,
       CallBackURL: config.mpesa.CALLBACK_URL,
       AccountReference,

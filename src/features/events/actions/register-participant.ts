@@ -63,8 +63,8 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     const transactionDesc = 'Tournament registration'
 
     const response = await mpesa.initiateStkPush({
-      Amount: Number(amount),
-      PhoneNumber: Number(phoneNumber),
+      Amount: amount,
+      PhoneNumber: phoneNumber,
       AccountReference: accountReference,
       TransactionDesc: transactionDesc,
     })

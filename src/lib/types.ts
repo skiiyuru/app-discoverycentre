@@ -18,14 +18,14 @@ export type AuthSuccessResponse = {
 }
 
 export type StkPushRequestBody = {
-  BusinessShortCode: number
+  BusinessShortCode: string
   Password: string
   Timestamp: string
   TransactionType: TransactionType
-  Amount: number
-  PartyA: number
-  PartyB: number
-  PhoneNumber: number
+  Amount: string
+  PartyA: string
+  PartyB: string
+  PhoneNumber: string
   CallBackURL: string
   AccountReference: string
   TransactionDesc: string

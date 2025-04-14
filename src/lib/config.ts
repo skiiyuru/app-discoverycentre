@@ -7,7 +7,7 @@ export const config = {
   },
   mpesa: {
     SANDBOX: process.env.MPESA_SANDBOX,
-    BUSINESS_SHORTCODE: process.env.MPESA_BUSINESS_SHORT_CODE,
+    BUSINESS_SHORTCODE: process.env.MPESA_BUSINESS_SHORT_CODE!,
     PASSKEY: process.env.MPESA_PASSKEY,
     CONSUMER_KEY: process.env.MPESA_CONSUMER_KEY,
     CONSUMER_SECRET: process.env.MPESA_CONSUMER_SECRET,

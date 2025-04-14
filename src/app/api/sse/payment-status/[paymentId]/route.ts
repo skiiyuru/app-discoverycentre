@@ -32,8 +32,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
       // try to connect client
       try {
         await subscriber.connect()
-        console.log(`✅ Client "${paymentId}" connected to channel "${channel}"`)
-        console.log(`Redis connected for subscription on channel: ${channel}`)
+        console.warn(`✅ Client "${paymentId}" connected to channel "${channel}"`)
+        console.warn(`Redis connected for subscription on channel: ${channel}`)
       }
       catch (error) {
         console.error(`❌ Failed to connect client "${paymentId}"\n`, error)
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
           return
         }
 
-        console.log(`✅ Subscribed successfully to channel "${channel}". Count: ${count}`)
+        console.warn(`✅ Subscribed successfully to channel "${channel}". Count: ${count}`)
         // Send a confirmation event (optional)
         const connectionMessage: ConnectionMessage = { status: 'success' }
         controller.enqueue(`event: connected\ndata: ${JSON.stringify(connectionMessage)}\n\n`)
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
 
       // Listen for messages on the subscribed channel
       subscriber.on('message', (receivedChannel, message) => {
-        console.log(`Received message from Redis channel "${receivedChannel}":`, message)
+        console.warn(`Received message from Redis channel "${receivedChannel}":`, message)
         if (receivedChannel === channel) {
           // Format as SSE message: data: <json string>\n\n
           // You can also add 'event: <event_name>\n' if you want named events
@@ -90,7 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
     },
     cancel: () => {
       // Clean up the 'subscriber' instance specific to this request
-      console.log(`SSE Client disconnected: ${paymentId}. Cleaning up Redis.`)
+      console.warn(`SSE Client disconnected: ${paymentId}. Cleaning up Redis.`)
       subscriber.unsubscribe(channel)
       subscriber.disconnect()
     },

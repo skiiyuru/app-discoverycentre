@@ -17,7 +17,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
     const eventSource = new EventSource(eventSourceUrl)
 
     eventSource.onopen = () => {
-      console.log('✅ Client side SSE connection established.')
+      console.warn('✅ Client side SSE connection established.')
       setError(null)
     }
 
@@ -33,7 +33,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
 
     // Handler for named 'paymentUpdate' events
     eventSource.addEventListener('paymentUpdate', (event) => {
-      console.log('✅ Received paymentUpdate event:', event.data)
+      console.warn('✅ Received paymentUpdate event:', event.data)
       try {
         const data = JSON.parse(event.data) as PaymentUpdate
         setUpdate(data)
