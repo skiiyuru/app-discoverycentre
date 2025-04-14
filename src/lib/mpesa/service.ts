@@ -46,6 +46,7 @@ class MpesaService {
 
   async initiateStkPush({ Amount, PhoneNumber, AccountReference, TransactionDesc }: StkPushUserInput) {
     const token = await this.getAccessToken()
+    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ token:', token)
 
     const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14)
 
