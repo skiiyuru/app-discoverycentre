@@ -74,6 +74,7 @@ export type RegisterParticipantResponse = {
   }
   errors?: InsertParticipantErrors
   errorMessage?: string
+  errorId?: number
 }
 
 export type Category = (typeof CATEGORIES)[number]

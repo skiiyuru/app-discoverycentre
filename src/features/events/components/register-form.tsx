@@ -42,10 +42,10 @@ export default function RegisterForm() {
       })
     }
 
-    if (state.errorMessage) {
+    if (state.errorId) {
       toast.error(state.errorMessage)
     }
-  }, [state.errorMessage, state.data?.payment])
+  }, [state.errorId, state.data?.payment])
 
   if (state.data?.payment) {
     return (

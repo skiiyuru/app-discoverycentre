@@ -108,6 +108,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
         cause: error.cause,
       })
       return {
+        errorId: Date.now(),
         errorMessage: `MPESA Error: ${error.message} (Code: ${error.code})`,
       }
     }
@@ -118,12 +119,14 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
         cause: error.cause,
       })
       return {
+        errorId: Date.now(),
         errorMessage: `Database Error: ${error.message}\nCode: ${error.code} )`,
       }
     }
     else {
       console.error('🚀 ~ registerParticipant ~ error:', error)
       return {
+        errorId: Date.now(),
         errorMessage: 'Something went wrong while registering the participant',
       }
     }
