@@ -76,7 +76,7 @@ class MpesaService {
       body: JSON.stringify(body),
     })
 
-    console.log('🚀 ~ MpesaService ~ initiateStkPush ~ response:', response)
+    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ response:', response)
 
     const data = await response.json() as (StkPushSuccessResponse | StkPushErrorResponse)
 
