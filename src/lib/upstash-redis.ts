@@ -8,6 +8,10 @@ if (!isRedisConfigured) {
   console.warn(errorMsg)
 }
 
-export const redisPublisher = Redis.fromEnv()
+export const redisPublisher = isRedisConfigured 
+  ? Redis.fromEnv() 
+  : null
 
-console.log('Initialized Upstash Redis publisher client.')
+if (isRedisConfigured) {
+  console.log('Initialized Upstash Redis publisher client.')
+}
