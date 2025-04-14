@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import type { ConnectionMessage, ConnectionStatus, PaymentUpdate } from '@/lib/types'
 
-export default function usePaymentChannel(paymentId: string): [update: PaymentUpdate | null, concectionStatus: ConnectionStatus, error: string | null] {
+export default function usePaymentChannel(paymentId: string): [update: PaymentUpdate | null, connectionStatus: ConnectionStatus, error: string | null] {
   const [update, setUpdate] = useState<PaymentUpdate | null>(null)
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('pending')
   const [error, setError] = useState<string | null>(null)
