@@ -1,1 +1,0 @@
-ALTER TABLE `payments` RENAME COLUMN "transactionDate" TO "transaction_date";

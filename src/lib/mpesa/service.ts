@@ -1,10 +1,10 @@
 import { Buffer } from 'node:buffer'
 
-import type { AuthSuccessResponse, StkPushErrorResponse, StkPushRequestBody, StkPushSuccessResponse, StkPushUserInput } from './types'
+import type { AuthSuccessResponse, StkPushErrorResponse, StkPushRequestBody, StkPushSuccessResponse, StkPushUserInput } from '../types'
 
-import { env } from '../env'
-import { MpesaError } from './errors'
-import { TransactionType } from './types'
+import { config } from '../config'
+import { MpesaError } from '../errors'
+import { TransactionType } from '../types'
 
 class MpesaService {
   private accessToken: string | null = null
@@ -15,9 +15,9 @@ class MpesaService {
       return this.accessToken
     }
 
-    const authToken = Buffer.from(`${env.mpesa.CONSUMER_KEY}:${env.mpesa.CONSUMER_SECRET}`).toString('base64')
+    const authToken = Buffer.from(`${config.mpesa.CONSUMER_KEY}:${config.mpesa.CONSUMER_SECRET}`).toString('base64')
 
-    const authResponse = await fetch(`${env.mpesa.SANDBOX}/oauth/v1/generate?grant_type=client_credentials`, {
+    const authResponse = await fetch(`${config.mpesa.SANDBOX}/oauth/v1/generate?grant_type=client_credentials`, {
       headers: {
         Authorization: `Basic ${authToken}`,
       },
@@ -49,24 +49,24 @@ class MpesaService {
 
     const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14)
 
-    const passwordString = `${env.mpesa.BUSINESS_SHORTCODE}${env.mpesa.PASSKEY}${timestamp}`
+    const passwordString = `${config.mpesa.BUSINESS_SHORTCODE}${config.mpesa.PASSKEY}${timestamp}`
     const password = Buffer.from(passwordString).toString('base64')
 
     const body: StkPushRequestBody = {
-      BusinessShortCode: Number(env.mpesa.BUSINESS_SHORTCODE),
+      BusinessShortCode: config.mpesa.BUSINESS_SHORTCODE,
       Password: password,
       Timestamp: timestamp,
       TransactionType: TransactionType.Paybill,
       Amount,
       PartyA: PhoneNumber,
-      PartyB: Number(env.mpesa.BUSINESS_SHORTCODE),
+      PartyB: config.mpesa.BUSINESS_SHORTCODE,
       PhoneNumber,
-      CallBackURL: env.mpesa.CALLBACK_URL,
+      CallBackURL: config.mpesa.CALLBACK_URL,
       AccountReference,
       TransactionDesc,
     }
 
-    const response = await fetch(`${env.mpesa.SANDBOX}/mpesa/stkpush/v1/processrequest`, {
+    const response = await fetch(`${config.mpesa.SANDBOX}/mpesa/stkpush/v1/processrequest`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

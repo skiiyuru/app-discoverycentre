@@ -1,28 +1,23 @@
 'use server'
-
-import { LibsqlError } from '@libsql/client'
+import { NeonDbError } from '@neondatabase/serverless'
 import { and, eq } from 'drizzle-orm'
-import { createInsertSchema } from 'drizzle-zod'
-import { z } from 'zod'
 
-import type { RegisterParticipantResponse } from '@/lib/events/types/types'
+import type { RegisterParticipantResponse } from '@/lib/types'
 
 import { db } from '@/db/db'
 import { participants, payments } from '@/db/schema'
-import { MpesaError } from '@/lib/mpesa/errors'
+import { MpesaError } from '@/lib/errors'
 import { mpesa } from '@/lib/mpesa/service'
-import { PaymentStatus } from '@/lib/mpesa/types'
+import { insertParticipantSchema } from '@/lib/validation-schemas'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
-  const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true }).extend({
-    phoneNumber: z.string().min(10, 'Phone number must be at least 10 digits').max(12, 'Phone number must not exceed 12 digits').regex(/^254\d{9}$/, 'Phone number must start with 254 followed by 9 digits'),
-  })
   const rawData = {
-    firstName: formData.get('firstName')?.toString(),
-    lastName: formData.get('lastName')?.toString(),
-    gender: formData.get('gender')?.toString(),
-    age: formData.get('age')?.toString(),
-    phoneNumber: formData.get('phoneNumber')?.toString(),
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    gender: formData.get('gender'),
+    age: formData.get('age'),
+    category: formData.get('category'),
+    phoneNumber: formData.get('phoneNumber'),
   }
 
   const result = insertParticipantSchema.safeParse(rawData)
@@ -37,7 +32,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
   const { phoneNumber, ...participantInput } = result.data
 
   const participantFilters = [eq(participants.firstName, participantInput.firstName), eq(participants.lastName, participantInput.lastName)]
-  const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, PaymentStatus.Success)]
+  const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, 'success')]
 
   try {
     // check for existing registration
@@ -68,8 +63,8 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     const transactionDesc = 'Tournament registration'
 
     const response = await mpesa.initiateStkPush({
-      Amount: Number(amount),
-      PhoneNumber: Number(phoneNumber),
+      Amount: amount,
+      PhoneNumber: phoneNumber,
       AccountReference: accountReference,
       TransactionDesc: transactionDesc,
     })
@@ -107,18 +102,30 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
   }
   catch (error) {
     if (error instanceof MpesaError) {
+      console.error('Mpesa error:', {
+        message: error.message,
+        code: error.code,
+        cause: error.cause,
+      })
       return {
         errorMessage: `MPESA Error: ${error.message} (Code: ${error.code})`,
       }
     }
-
-    if (error instanceof LibsqlError) {
-      throw new TypeError(`Database error: ${error.message}`)
+    else if (error instanceof NeonDbError) {
+      console.error('Database error:', {
+        message: error.message,
+        code: error.code,
+        cause: error.cause,
+      })
+      return {
+        errorMessage: `Database Error: ${error.message}\nCode: ${error.code} )`,
+      }
     }
-
-    console.error('🚀 ~ registerParticipant ~ error:', error)
-    throw new Error('Something went wrong while registering participant')
+    else {
+      console.error('🚀 ~ registerParticipant ~ error:', error)
+      return {
+        errorMessage: 'Something went wrong while registering the participant',
+      }
+    }
   }
 }
-
-// TODO: fix losing form state when field errors occur

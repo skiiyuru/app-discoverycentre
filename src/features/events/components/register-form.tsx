@@ -4,7 +4,7 @@ import { Loader2, Wallet } from 'lucide-react'
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import type { RegisterParticipantResponse } from '@/lib/events/types/types'
+import type { RegisterParticipantResponse } from '@/lib/types'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import PaymentUpdateContent from '@/features/payments/components/payment-update-content'
+import { CATEGORIES } from '@/lib/constants'
 
 import { registerParticipant } from '../actions/register-participant'
 
@@ -59,6 +60,7 @@ export default function RegisterForm() {
       <CardHeader>
         <CardTitle>Register for tournament</CardTitle>
         <CardDescription>Enter a participant's details and pay using MPESA.</CardDescription>
+        <CardDescription>Registation closes on 12th May 2025.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} autoComplete="on">
@@ -70,8 +72,8 @@ export default function RegisterForm() {
                 name="firstName"
                 placeholder="Grace"
                 required
-                minLength={2}
-                maxLength={50}
+                minLength={3}
+                maxLength={25}
                 autoComplete="given-name"
                 aria-describedby="firstName-error"
                 className={state?.errors?.firstName ? 'border-red-500' : ''}
@@ -89,8 +91,8 @@ export default function RegisterForm() {
                 name="lastName"
                 placeholder="Brooks"
                 required
-                minLength={2}
-                maxLength={50}
+                minLength={3}
+                maxLength={25}
                 autoComplete="family-name"
                 aria-describedby="lastName-error"
                 className={state?.errors?.lastName ? 'border-red-500' : ''}
@@ -103,10 +105,9 @@ export default function RegisterForm() {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="gender">Gender</Label>
-              <Select name="gender">
+              <Select name="gender" required>
                 <SelectTrigger
                   id="gender"
-
                   className={`w-full ${state?.errors?.gender ? 'border-red-500' : ''}`}
                   aria-describedby="gender-error"
                 >
@@ -139,6 +140,32 @@ export default function RegisterForm() {
               {state?.errors?.age && (
                 <p id="age-error" className="text-sm text-red-500">
                   {state.errors.age[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="category">Category</Label>
+              <Select name="category" required>
+                <SelectTrigger
+                  id="category"
+                  className={`w-full ${state?.errors?.category ? 'border-red-500' : ''}`}
+                  aria-describedby="category-error"
+                >
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {CATEGORIES.map(category => (
+                    <SelectItem key={`u${category}`} value={category}>
+                      Under
+                      {' '}
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {state?.errors?.category && (
+                <p id="category-error" className="text-sm text-red-500">
+                  {state.errors.category[0]}
                 </p>
               )}
             </div>

@@ -1,21 +1,41 @@
-import { CircleCheck, CircleX, Loader2 } from 'lucide-react'
+import { CircleCheck, CircleX, Loader2, RefreshCwOff } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
-import { CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { usePaymentEvent } from '@/hooks/use-payment-event'
-import { PaymentStatus } from '@/lib/mpesa/types'
+import { Button } from '@/components/ui/button'
+import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import usePaymentChannel from '@/hooks/use-payment-channel'
 import { formatTransactionDate } from '@/lib/utils'
 
 export default function PaymentUpdateContent({ paymentId }: { paymentId: string }) {
-  const paymentEvent = usePaymentEvent(paymentId)
+  const [update, connectionStatus, error] = usePaymentChannel(paymentId)
+  const router = useRouter()
 
-  if (paymentEvent && paymentEvent.status === PaymentStatus.Success) {
+  if (error || connectionStatus === 'failed') {
+    return (
+      <>
+        <CardHeader>
+          <CardTitle>
+            <span className="flex gap-2 items-center">
+              <RefreshCwOff className="text-red-400" />
+              Something went wrong while attempting to get an update.
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p aria-live="assertive">{error}</p>
+        </CardContent>
+      </>
+    )
+  }
+
+  if (update && update.status === 'success') {
     return (
       <>
         <CardHeader>
           <CardTitle>
             <span className="flex gap-2 items-center">
               <CircleCheck className="text-green-400" />
-              {`Payment ${paymentEvent.status}`}
+              {`Payment ${update.status}`}
             </span>
           </CardTitle>
         </CardHeader>
@@ -27,39 +47,45 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
               <span className="font-bold">
                 KES.
                 {' '}
-                {paymentEvent.amount?.toLocaleString()}
+                {update.amount?.toLocaleString()}
               </span>
             </p>
             <p aria-label="MPESA Receipt Information">
               MPESA receipt number:
               {' '}
-              <span className="font-bold">{paymentEvent.mpesaReceiptNumber}</span>
+              <span className="font-bold">{update.mpesaReceiptNumber}</span>
             </p>
             <p aria-label="Transaction Date Information">
               Transaction date:
               {' '}
-              <span className="font-bold">{formatTransactionDate(paymentEvent.transactionDate)}</span>
+              <span className="font-bold">{formatTransactionDate(update.transactionDate)}</span>
             </p>
           </div>
         </CardContent>
+        <CardFooter>
+          <Button className="w-full py-4" onClick={() => router.refresh()}>Make another payment</Button>
+        </CardFooter>
       </>
     )
   }
 
-  if (paymentEvent && paymentEvent.status === PaymentStatus.Failed) {
+  if (update && update.status === 'failed') {
     return (
       <>
         <CardHeader>
           <CardTitle>
             <span className="flex gap-2 items-center">
               <CircleX className="text-red-400" />
-              {`Payment ${paymentEvent.status}`}
+              {`Payment ${update.status}`}
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p aria-live="assertive">{paymentEvent.errorMessage || 'An error occurred with your payment.'}</p>
+          <p aria-live="assertive">{update.errorMessage || 'An error occurred with your payment.'}</p>
         </CardContent>
+        <CardFooter>
+          <Button className="w-full py-4" onClick={() => router.refresh()}>Try again</Button>
+        </CardFooter>
       </>
     )
   }
@@ -70,7 +96,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
         <CardTitle>
           <span className="flex gap-2 items-center">
             <Loader2 className="animate-spin" />
-            Processing payment...
+            {connectionStatus === 'pending' ? 'Connecting...' : `Confirming payment...`}
           </span>
         </CardTitle>
       </CardHeader>

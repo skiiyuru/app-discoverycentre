@@ -12,11 +12,11 @@ export default antfu({
   rules: {
     'ts/no-redeclare': 'off',
     'ts/consistent-type-definitions': ['error', 'type'],
-    'no-console': ['warn'],
+    'no-console': process.env.NODE_ENV === 'production' ? ['error'] : ['warn'],
     'antfu/no-top-level-await': ['off'],
     'node/prefer-global/process': ['off'],
     'node/no-process-env': ['error', {
-      allowedVariables: ['NEXT_RUNTIME', 'CI'],
+      allowedVariables: ['NEXT_RUNTIME', 'CI', 'NODE_ENV'],
     }],
     'perfectionist/sort-imports': ['error', {
       tsconfigRootDir: '.',
@@ -25,5 +25,6 @@ export default antfu({
       case: 'kebabCase',
       ignore: ['README.md'],
     }],
+    'react-web-api/no-leaked-event-listener': 'off',
   },
 })
