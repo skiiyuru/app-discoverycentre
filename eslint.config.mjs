@@ -26,5 +26,6 @@ export default antfu({
       ignore: ['README.md'],
     }],
     'react-web-api/no-leaked-event-listener': 'off',
+    'react-hooks-extra/no-direct-set-state-in-use-effect': 'off',
   },
 })
