@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
     tls: { rejectUnauthorized: false },
     lazyConnect: true,
     maxRetriesPerRequest: null,
-    connectTimeout: 90 * 1000,
+    connectTimeout: 30 * 1000,
   })
 
   const channel: PaymentUpdateChannel = `paymentId:${paymentId}`
@@ -72,11 +72,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
         if (receivedChannel === channel) {
           // Format as SSE message: data: <json string>\n\n
           // You can also add 'event: <event_name>\n' if you want named events
-          controller.enqueue(`event: paymentUpdate\ndata: ${message}\n\n`)
-
-          // disconnect
-          subscriber.unsubscribe(channel)
-          subscriber.disconnect()
+          try {
+            controller.enqueue(`event: paymentUpdate\ndata: ${message}\n\n`)
+            subscriber.unsubscribe(channel)
+              .then(() => subscriber.disconnect())
+              .catch(console.error)
+          }
+          catch (err) {
+            console.error(`Error handling message for ${paymentId}:`, err)
+          }
         }
       })
 
