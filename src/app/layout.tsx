@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
-import { Inter, JetBrains_Mono } from 'next/font/google'
-import { Toaster } from 'sonner'
 import '@/styles/globals.css'
+import { Inter } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 import { ThemeProvider } from './_components/theme-provider'
 
@@ -12,14 +12,8 @@ const inter = Inter({
   display: 'swap',
 })
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-mono',
-  subsets: ['latin'],
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
-  title: 'Discovery Chess Tournament Registration',
+  title: 'Discovery Chess Junior Tournament',
   description: 'Register for the Discovery Chess Tournament. Secure your spot, make M-PESA payments, and join the competition.',
   keywords: ['chess tournament', 'chess competition', 'Discovery Centre', 'M-PESA payment', 'chess registration'],
   authors: [{ name: 'Discovery Centre' }],
@@ -30,18 +24,18 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://app.discoverycentre.co.ke'),
+  metadataBase: new URL('https://app.thediscoverycentre.co.ke'),
   openGraph: {
-    title: 'Discovery Chess Tournament Registration',
+    title: 'Discovery Chess Junior Tournament',
     description: 'Register for the Discovery Chess Tournament. Secure your spot, make M-PESA payments, and join the competition.',
-    url: 'https://app.discoverycentre.co.ke',
-    siteName: 'Discovery Chess Tournament',
+    url: 'https://app.thediscoverycentre.co.ke',
+    siteName: 'Discovery Chess Junior Tournament',
     locale: 'en_KE',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Discovery Chess Tournament Registration',
+    title: 'Discovery Chess Junior Tournament',
     description: 'Register for the Discovery Chess Tournament. Secure your spot, make M-PESA payments, and join the competition.',
   },
   robots: {
@@ -65,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        className={`${inter.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -76,7 +70,7 @@ export default function RootLayout({
           <main>
             {children}
           </main>
-          <Toaster position="bottom-left" richColors duration={10000} closeButton />
+          <Toaster position="bottom-right" richColors duration={10000} closeButton />
         </ThemeProvider>
       </body>
     </html>

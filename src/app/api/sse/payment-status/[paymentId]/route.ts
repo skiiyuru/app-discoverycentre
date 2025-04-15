@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
     tls: { rejectUnauthorized: false },
     lazyConnect: true,
     maxRetriesPerRequest: null,
-    connectTimeout: 60 * 1000 * 1.5,
+    connectTimeout: 90 * 1000,
   })
 
   const channel: PaymentUpdateChannel = `paymentId:${paymentId}`
@@ -73,6 +73,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
           // Format as SSE message: data: <json string>\n\n
           // You can also add 'event: <event_name>\n' if you want named events
           controller.enqueue(`event: paymentUpdate\ndata: ${message}\n\n`)
+
+          // disconnect
+          subscriber.unsubscribe(channel)
+          subscriber.disconnect()
         }
       })
 
