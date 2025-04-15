@@ -50,9 +50,11 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
         },
       },
     })
+    console.warn('🚀 ~ registerParticipant ~ existingParticipant:', existingParticipant)
 
     if (existingParticipant?.payments.length) {
       return {
+        errorId: Date.now(),
         errorMessage: 'A participant with these details is already registered',
       }
     }
