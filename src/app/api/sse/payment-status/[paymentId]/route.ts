@@ -62,7 +62,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ paym
 
         console.warn(`✅ Subscribed successfully to channel "${channel}". Count: ${count}`)
         // Send a confirmation event (optional)
-        const connectionMessage: ConnectionMessage = { status: 'success' }
+        const connectionMessage: ConnectionMessage = { status: 'open' }
         controller.enqueue(`event: connected\ndata: ${JSON.stringify(connectionMessage)}\n\n`)
       })
 

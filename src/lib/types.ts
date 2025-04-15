@@ -49,7 +49,7 @@ export type StkPushErrorResponse = {
 
 export type StkCallbackResponse = z.infer<typeof callbackSchema>
 
-export type ConnectionStatus = 'pending' | 'success' | 'failed'
+export type ConnectionStatus = 'closed' | 'open' | 'failed' | 'pending'
 
 export type ConnectionMessage = {
   status: ConnectionStatus

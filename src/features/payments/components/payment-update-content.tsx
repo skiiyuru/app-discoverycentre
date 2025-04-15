@@ -1,14 +1,12 @@
 import { CircleCheck, CircleX, Loader2, RefreshCwOff } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import usePaymentChannel from '@/hooks/use-payment-channel'
 import { formatTransactionDate } from '@/lib/utils'
 
-export default function PaymentUpdateContent({ paymentId }: { paymentId: string }) {
+export default function PaymentUpdateContent({ paymentId, toggleForm }: { paymentId: string, toggleForm: () => void }) {
   const [update, connectionStatus, error] = usePaymentChannel(paymentId)
-  const router = useRouter()
 
   if (error || connectionStatus === 'failed') {
     return (
@@ -18,6 +16,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
             <span className="flex gap-2 items-center">
               <RefreshCwOff className="text-red-400" />
               Something went wrong while attempting to get an update.
+              Call us on: 0720 572 303 to confirm the payment.
             </span>
           </CardTitle>
         </CardHeader>
@@ -63,7 +62,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full py-4" onClick={() => router.refresh()}>Make another payment</Button>
+          <Button className="w-full py-4" onClick={toggleForm}>Make another payment</Button>
         </CardFooter>
       </>
     )
@@ -84,7 +83,7 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
           <p aria-live="assertive">{update.errorMessage || 'An error occurred with your payment.'}</p>
         </CardContent>
         <CardFooter>
-          <Button className="w-full py-4" onClick={() => router.refresh()}>Try again</Button>
+          <Button className="w-full py-4" onClick={toggleForm}>Try again</Button>
         </CardFooter>
       </>
     )
@@ -96,7 +95,8 @@ export default function PaymentUpdateContent({ paymentId }: { paymentId: string 
         <CardTitle>
           <span className="flex gap-2 items-center">
             <Loader2 className="animate-spin" />
-            {connectionStatus === 'pending' ? 'Connecting...' : `Confirming payment...`}
+            {connectionStatus === 'pending' && 'Connecting...'}
+            {connectionStatus === 'open' && `Confirming payment...`}
           </span>
         </CardTitle>
       </CardHeader>

@@ -37,10 +37,15 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
       try {
         const data = JSON.parse(event.data) as PaymentUpdate
         setUpdate(data)
+        if (data.status === 'failed' || data.status === 'success') {
+          eventSource.close()
+          setConnectionStatus('closed')
+        }
       }
       catch (error) {
         console.error('Failed to parse payment update data:', error)
         setError('Received invalid update data.')
+        setConnectionStatus('failed')
       }
     })
 
@@ -54,6 +59,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
     return () => {
       console.warn('Clean up: Closing client side SSE connection.')
       eventSource.close()
+      setConnectionStatus('closed')
     }
   }, [paymentId])
 
