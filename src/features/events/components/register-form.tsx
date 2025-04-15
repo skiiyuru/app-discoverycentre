@@ -1,7 +1,7 @@
 'use client'
 
 import { Loader2, Wallet } from 'lucide-react'
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import type { RegisterParticipantResponse } from '@/lib/types'
@@ -34,9 +34,15 @@ const initialState: RegisterParticipantResponse = {
 
 export default function RegisterForm() {
   const [state, action, loading] = useActionState(registerParticipant, initialState)
+  const [showForm, setShowForm] = useState(true)
+
+  function toggleForm() {
+    setShowForm(prevState => !prevState)
+  }
 
   useEffect(() => {
     if (state.data?.payment) {
+      toggleForm()
       toast.info(`Payment request sent to: ${state.data.payment.phoneNumber}`, {
         description: 'Enter you MPESA PIN to authorize the payment',
       })
@@ -47,10 +53,10 @@ export default function RegisterForm() {
     }
   }, [state.errorId, state.errorMessage, state.data?.payment])
 
-  if (state.data?.payment) {
+  if (state.data?.payment && !showForm) {
     return (
       <Card>
-        <PaymentUpdateContent paymentId={state.data.payment.id} />
+        <PaymentUpdateContent paymentId={state.data.payment.id} toggleForm={toggleForm} />
       </Card>
     )
   }
@@ -60,7 +66,7 @@ export default function RegisterForm() {
       <CardHeader>
         <CardTitle>Register for tournament</CardTitle>
         <CardDescription>Enter a participant's details and pay using MPESA.</CardDescription>
-        <CardDescription>Registation closes on 12th May 2025.</CardDescription>
+        <CardDescription>Registation closes on 15th May 2025.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={action} autoComplete="on">
