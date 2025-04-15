@@ -5,7 +5,7 @@ import { redisPublisher } from '../upstash-redis'
 export async function publishPaymentUpdate(paymentId: string, update: PaymentUpdate) {
   const channel: PaymentUpdateChannel = `paymentId:${paymentId}`
   const message = JSON.stringify(update)
-  console.warn(`Publishing update for payment: "${channel} "\nmessage: ${message}`)
+  // console.warn(`Publishing update for payment: "${channel} "\nmessage: ${message}`)
 
   if (!redisPublisher) {
     console.warn('Redis publisher not initialized. Skipping payment update publication.')

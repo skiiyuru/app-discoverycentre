@@ -13,5 +13,5 @@ export const redisPublisher = isRedisConfigured
   : null
 
 if (isRedisConfigured) {
-  console.warn('Initialized Upstash Redis publisher client.')
+  // console.warn('Initialized Upstash Redis publisher client.')
 }

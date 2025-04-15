@@ -17,7 +17,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
     const eventSource = new EventSource(eventSourceUrl)
 
     eventSource.onopen = () => {
-      console.warn('✅ Client side SSE connection established.')
+      // console.warn('✅ Client side SSE connection established.')
       setError(null)
     }
 
@@ -33,7 +33,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
 
     // Handler for named 'paymentUpdate' events
     eventSource.addEventListener('paymentUpdate', (event) => {
-      console.warn('✅ Received paymentUpdate event:', event.data)
+      // console.warn('✅ Received paymentUpdate event:', event.data)
       try {
         const data = JSON.parse(event.data) as PaymentUpdate
         setUpdate(data)
@@ -57,7 +57,7 @@ export default function usePaymentChannel(paymentId: string): [update: PaymentUp
     }
 
     return () => {
-      console.warn('Clean up: Closing client side SSE connection.')
+      // console.warn('Clean up: Closing client side SSE connection.')
       eventSource.close()
       setConnectionStatus('closed')
     }

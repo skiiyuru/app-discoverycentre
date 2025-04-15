@@ -50,7 +50,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
         },
       },
     })
-    console.warn('🚀 ~ registerParticipant ~ existingParticipant:', existingParticipant)
+    // console.warn('🚀 ~ registerParticipant ~ existingParticipant:', existingParticipant)
 
     if (existingParticipant?.payments.length) {
       return {
@@ -60,7 +60,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     }
 
     // TODO: Replace with real values
-    const amount = '1'
+    const amount = '1000'
     const accountReference = 'Chess tournament'
     const transactionDesc = 'Tournament registration'
 

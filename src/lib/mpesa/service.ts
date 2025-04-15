@@ -46,14 +46,14 @@ class MpesaService {
 
   async initiateStkPush({ Amount, PhoneNumber, AccountReference, TransactionDesc }: StkPushUserInput) {
     const token = await this.getAccessToken()
-    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ token:', token)
+    // console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ token:', token)
 
     const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, '').slice(0, 14)
 
     const passwordString = `${config.mpesa.BUSINESS_SHORTCODE}${config.mpesa.PASSKEY}${timestamp}`
     const password = Buffer.from(passwordString).toString('base64')
-    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ passwordString:', passwordString)
-    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ password:', password)
+    // console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ passwordString:', passwordString)
+    // console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ password:', password)
 
     const body: StkPushRequestBody = {
       BusinessShortCode: config.mpesa.BUSINESS_SHORTCODE,
@@ -68,7 +68,7 @@ class MpesaService {
       AccountReference,
       TransactionDesc,
     }
-    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ body:', body)
+    // console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ body:', body)
 
     const response = await fetch(`${config.mpesa.SANDBOX}/mpesa/stkpush/v1/processrequest`, {
       method: 'POST',
@@ -79,7 +79,7 @@ class MpesaService {
       body: JSON.stringify(body),
     })
 
-    console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ response:', response)
+    // console.warn('🚀 ~ MpesaService ~ initiateStkPush ~ response:', response)
 
     const data = await response.json() as (StkPushSuccessResponse | StkPushErrorResponse)
 
