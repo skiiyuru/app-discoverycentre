@@ -65,7 +65,6 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
       }
     }
 
-    // TODO: Replace with real values
     const amount = '1000'
     const accountReference = 'Chess tournament'
     const transactionDesc = 'Tournament registration'
