@@ -1,0 +1,1 @@
+ALTER TABLE "participants" ADD COLUMN "dob" varchar(10) DEFAULT '1900-01-01' NOT NULL;
