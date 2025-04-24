@@ -14,6 +14,7 @@ export const participants = pgTable('participants', {
   firstName: varchar({ length: 25 }).notNull(),
   lastName: varchar({ length: 25 }).notNull(),
   gender: varchar({ length: 6, enum: GENDERS }).notNull(),
+  dob: varchar({ length: 10 }).notNull().default('1900-01-01'),
   age: smallint().notNull(),
   category: varchar({ length: 2, enum: CATEGORIES }).notNull(),
 }, table => ([

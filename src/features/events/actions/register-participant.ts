@@ -8,6 +8,7 @@ import { db } from '@/db/db'
 import { participants, payments } from '@/db/schema'
 import { MpesaError } from '@/lib/errors'
 import { mpesa } from '@/lib/mpesa/service'
+import { calculateAge } from '@/lib/utils'
 import { insertParticipantSchema } from '@/lib/validation-schemas'
 
 export async function registerParticipant(prevState: RegisterParticipantResponse | null, formData: FormData): Promise<RegisterParticipantResponse> {
@@ -15,7 +16,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
     gender: formData.get('gender'),
-    age: formData.get('age'),
+    dob: formData.get('dob'),
     category: formData.get('category'),
     phoneNumber: formData.get('phoneNumber'),
   }
@@ -29,7 +30,12 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     }
   }
 
-  const { phoneNumber, ...participantInput } = result.data
+  const { phoneNumber, dob, ...otherInputs } = result.data
+  const participantInput = {
+    ...otherInputs,
+    dob: dob.toISOString().split('T')[0],
+    age: calculateAge(dob),
+  }
 
   const participantFilters = [eq(participants.firstName, participantInput.firstName), eq(participants.lastName, participantInput.lastName)]
   const paymentFilters = [eq(payments.phoneNumber, phoneNumber), eq(payments.status, 'success')]
@@ -59,7 +65,6 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
       }
     }
 
-    // TODO: Replace with real values
     const amount = '1000'
     const accountReference = 'Chess tournament'
     const transactionDesc = 'Tournament registration'

@@ -131,21 +131,21 @@ export default function RegisterForm() {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="age">Age</Label>
+              <Label htmlFor="dob">Date of Birth</Label>
               <Input
-                id="age"
-                name="age"
+                id="dob"
+                name="dob"
                 placeholder="6"
                 required
-                type="number"
-                min="1"
-                max="100"
-                aria-describedby="age-error"
-                className={state?.errors?.age ? 'border-red-500' : ''}
+                type="date"
+                min={new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                max={new Date(Date.now() - 6 * 365.25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                aria-describedby="dob-error"
+                className={state?.errors?.dob ? 'border-red-500' : ''}
               />
-              {state?.errors?.age && (
-                <p id="age-error" className="text-sm text-red-500">
-                  {state.errors.age[0]}
+              {state?.errors?.dob && (
+                <p id="dob-error" className="text-sm text-red-500">
+                  {state.errors.dob[0]}
                 </p>
               )}
             </div>

@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 export const config = {
   db: {
-    URL: process.env.NEON_DB_URL ?? '',
+    URL: (process.env.NODE_ENV === 'production' ? process.env.NEON_DB_URL : process.env.DEV_NEON_DB_URL) ?? '',
   },
   mpesa: {
     SANDBOX: process.env.NODE_ENV === 'production' ? process.env.MPESA_SANDBOX : process.env.DEV_MPESA_SANDBOX,

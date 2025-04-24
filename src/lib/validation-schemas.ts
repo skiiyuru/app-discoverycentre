@@ -5,7 +5,7 @@ import { participants } from '@/db/schema'
 
 import { CATEGORIES, GENDERS } from './constants'
 
-export const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true }).extend({
+export const insertParticipantSchema = createInsertSchema(participants).omit({ id: true, createdAt: true, age: true }).extend({
   phoneNumber: z.string()
     .trim()
     .min(10, 'Phone number must be at least 10 digits')
@@ -29,12 +29,12 @@ export const insertParticipantSchema = createInsertSchema(participants).omit({ i
         .replace(/[^a-z\s-]/g, '')
         .trim(),
     ),
-  age: z.string()
-    .transform(val => Number(val))
+  dob: z.string()
+    .transform(str => new Date(str))
     .pipe(
-      z.number()
-        .min(1, 'Age must be at least 1 year')
-        .max(18, 'Age must not exceed 18 years'),
+      z.date()
+        .min(new Date(Date.now() - 18 * 365.25 * 24 * 60 * 60 * 1000), 'Participant must be under 18 years')
+        .max(new Date(Date.now() - 6 * 365.25 * 24 * 60 * 60 * 1000), 'Participant must be at least 6 years old'),
     ),
   category: z.enum(CATEGORIES),
   gender: z.enum(GENDERS),
