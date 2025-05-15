@@ -76,6 +76,7 @@ export type RegisterParticipantResponse = {
   errorMessage?: string
   errorId?: number
 }
+export type GetParticipantsResponse = SelectParticipant[] | ErrorResponse
 
 export type Category = (typeof CATEGORIES)[number]
 
@@ -87,4 +88,9 @@ export type PaymentUpdate = {
   mpesaReceiptNumber?: string
   transactionDate?: string
   errorMessage?: string
+}
+
+export type ErrorResponse = {
+  errorMessage: string
+  errorId: number
 }
