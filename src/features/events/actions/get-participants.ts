@@ -19,6 +19,7 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       dob: participants.dob,
       category: participants.category,
       // createdAt: participants.createdAt,
+      phoneNumber: payments.phoneNumber,
       mpesaReceiptNumber: payments.mpesaReceiptNumber,
       createdAt: payments.createdAt,
     })

@@ -76,7 +76,7 @@ export type RegisterParticipantResponse = {
   errorMessage?: string
   errorId?: number
 }
-export type GetParticipantsResponse = (Omit<SelectParticipant, 'createdAt'> & Pick<SelectPayment, 'createdAt' | 'mpesaReceiptNumber'>)[] | ErrorResponse
+export type GetParticipantsResponse = (Omit<SelectParticipant, 'createdAt'> & Pick<SelectPayment, 'createdAt' | 'mpesaReceiptNumber' | 'phoneNumber'>)[] | ErrorResponse
 
 export type Category = (typeof CATEGORIES)[number]
 
