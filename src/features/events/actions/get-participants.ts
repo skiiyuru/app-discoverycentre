@@ -18,9 +18,9 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       age: participants.age,
       dob: participants.dob,
       category: participants.category,
-      createdAt: participants.createdAt,
+      // createdAt: participants.createdAt,
       mpesaReceiptNumber: payments.mpesaReceiptNumber,
-      paymentDate: payments.createdAt,
+      createdAt: payments.createdAt,
     })
       .from(participants)
       .innerJoin(
