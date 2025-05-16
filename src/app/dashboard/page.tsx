@@ -1,19 +1,6 @@
-import { toast } from 'sonner'
-
-import getParticipants from '@/features/events/actions/get-participants'
 import ExportButton from '@/features/events/components/export-button'
 
 export default async function Page() {
-  const data = await getParticipants()
-
-  const isError = data && 'errorMessage' in data
-  // const participants = isError ? [] : data
-
-  if (isError) {
-    toast.error(data.errorMessage)
-    return <p className="text-red-400">Could not retrieve the data</p>
-  }
-
   return (
     <div className="grid gap-4 md:max-w-4/5 lg:max-w-2/5 mx-auto">
       <div className="flex justify-between">
