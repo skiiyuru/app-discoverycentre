@@ -4,6 +4,8 @@ import * as XLSX from 'xlsx'
 
 import type { ErrorResponse } from '@/lib/types'
 
+import { formatTransactionDate } from '@/lib/utils'
+
 import getParticipants from './get-participants'
 
 // eslint-disable-next-line node/prefer-global/buffer
@@ -24,7 +26,7 @@ export async function exportParticipants(): Promise<Buffer | ErrorResponse> {
       'Date of Birth': p.dob,
       'Category': p.category,
       'M-PESA Receipt': p.mpesaReceiptNumber,
-      'Payment Date': p.createdAt,
+      'Payment Date': formatTransactionDate(p.createdAt),
     })))
 
     // Add worksheet to workbook
