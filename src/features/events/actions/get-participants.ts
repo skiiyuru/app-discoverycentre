@@ -1,7 +1,7 @@
 'use server'
 
 import { NeonDbError } from '@neondatabase/serverless'
-import { and, desc, eq, exists } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 import type { GetParticipantsResponse } from '@/lib/types'
 
@@ -10,17 +10,27 @@ import { participants, payments } from '@/db/schema'
 
 export default async function getParticipants(): Promise<GetParticipantsResponse> {
   try {
-    const results = await db.query.participants.findMany({
-      where: exists(
-        db.select().from(payments).where(
-          and(
-            eq(payments.participantId, participants.id),
-            eq(payments.status, 'success'),
-          ),
-        ),
-      ),
-      orderBy: desc(participants.createdAt),
+    const results = await db.select({
+      id: participants.id,
+      firstName: participants.firstName,
+      lastName: participants.lastName,
+      gender: participants.gender,
+      age: participants.age,
+      dob: participants.dob,
+      category: participants.category,
+      createdAt: participants.createdAt,
+      mpesaReceiptNumber: payments.mpesaReceiptNumber,
+      paymentDate: payments.createdAt,
     })
+      .from(participants)
+      .innerJoin(
+        payments,
+        and(
+          eq(participants.id, payments.participantId),
+          eq(payments.status, 'success'),
+        ),
+      )
+      .orderBy(desc(participants.createdAt))
 
     console.warn('🚀 ~ getParticipants ~ participantsWithPayments:', results)
     return results

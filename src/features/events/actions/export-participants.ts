@@ -23,6 +23,8 @@ export async function exportParticipants(): Promise<Buffer | ErrorResponse> {
       'Age': p.age,
       'Date of Birth': p.dob,
       'Category': p.category,
+      'M-PESA Receipt': p.mpesaReceiptNumber,
+      'Payment Date': p.createdAt,
     })))
 
     // Add worksheet to workbook
