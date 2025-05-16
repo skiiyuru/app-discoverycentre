@@ -12,7 +12,7 @@ export default function Home() {
           src={flyer}
           alt="Picture of chess tornament flyer"
           priority
-          className="w-10/12 sm:w-2/3 lg:w-1/5"
+          className="w-10/12 sm:w-2/3 lg:w-4/5"
           placeholder="blur"
         />
       </div>
