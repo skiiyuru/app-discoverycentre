@@ -32,11 +32,11 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       })
       return {
         errorId: Date.now(),
-        errorMessage: `Database Error: ${error.message}\nCode: ${error.code} )`,
+        errorMessage: `Database Error: ${error.message}\nCode: ${error.code}`,
       }
     }
     else {
-      console.error('🚀 ~ getParticipants ~ error:', error)
+      console.error('getParticipants ~ error:', error)
 
       return {
         errorId: Date.now(),

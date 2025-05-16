@@ -11,7 +11,7 @@ export default async function Page() {
 
   if (isError) {
     toast.error(data.errorMessage)
-    return <p className="text-red-400">Could not retreive the data</p>
+    return <p className="text-red-400">Could not retrieve the data</p>
   }
 
   return (

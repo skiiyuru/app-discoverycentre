@@ -2,9 +2,12 @@
 
 import * as XLSX from 'xlsx'
 
+import type { ErrorResponse } from '@/lib/types'
+
 import getParticipants from './get-participants'
 
-export async function exportParticipants() {
+// eslint-disable-next-line node/prefer-global/buffer
+export async function exportParticipants(): Promise<Buffer | ErrorResponse> {
   try {
     const response = await getParticipants()
 
