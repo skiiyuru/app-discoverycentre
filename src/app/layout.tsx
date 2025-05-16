@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 
 import '@/styles/globals.css'
+import {
+  ClerkProvider,
+} from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'sonner'
 
@@ -57,22 +60,24 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} font-sans antialiased`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${inter.variable} font-sans antialiased`}
         >
-          <main>
-            {children}
-          </main>
-          <Toaster position="bottom-right" richColors duration={10000} closeButton />
-        </ThemeProvider>
-      </body>
-    </html>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main>
+              {children}
+            </main>
+            <Toaster position="bottom-right" richColors duration={10000} closeButton />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   )
 }
