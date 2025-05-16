@@ -32,7 +32,7 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       )
       .orderBy(desc(participants.createdAt))
 
-    console.warn('🚀 ~ getParticipants ~ participantsWithPayments:', results)
+    // console.warn('🚀 ~ getParticipants ~ participantsWithPayments:', results)
     return results
   }
   catch (error) {
