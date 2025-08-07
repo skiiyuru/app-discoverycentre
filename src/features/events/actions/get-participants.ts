@@ -22,6 +22,7 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       phoneNumber: payments.phoneNumber,
       mpesaReceiptNumber: payments.mpesaReceiptNumber,
       createdAt: payments.createdAt,
+      school: participants.school,
     })
       .from(participants)
       .innerJoin(
@@ -33,7 +34,7 @@ export default async function getParticipants(): Promise<GetParticipantsResponse
       )
       .orderBy(desc(participants.createdAt))
 
-    // console.warn('🚀 ~ getParticipants ~ participantsWithPayments:', results)
+    console.log('🚀 ~ getParticipants ~ participantsWithPayments:', results)
     return results
   }
   catch (error) {

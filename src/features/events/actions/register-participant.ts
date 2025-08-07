@@ -19,6 +19,7 @@ export async function registerParticipant(prevState: RegisterParticipantResponse
     dob: formData.get('dob'),
     category: formData.get('category'),
     phoneNumber: formData.get('phoneNumber'),
+    school: formData.get('school'),
   }
 
   const result = insertParticipantSchema.safeParse(rawData)

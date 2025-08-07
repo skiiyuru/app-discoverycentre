@@ -1,0 +1,1 @@
+ALTER TABLE "participants" ADD COLUMN "school" varchar(25) DEFAULT '' NOT NULL;
