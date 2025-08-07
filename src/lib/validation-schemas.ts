@@ -38,6 +38,10 @@ export const insertParticipantSchema = createInsertSchema(participants).omit({ i
     ),
   category: z.enum(CATEGORIES),
   gender: z.enum(GENDERS),
+  school: z.string()
+    .min(3, 'School must be at least 3 characters')
+    .max(255, 'School must not exceed 255 characters')
+    .transform(val => val.toLowerCase().trim()),
 })
 
 export const callbackSchema = z.object({
