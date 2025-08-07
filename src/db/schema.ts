@@ -17,6 +17,7 @@ export const participants = pgTable('participants', {
   dob: varchar({ length: 10 }).notNull().default('1900-01-01'),
   age: smallint().notNull(),
   category: varchar({ length: 2, enum: CATEGORIES }).notNull(),
+  school: varchar({ length: 255 }).notNull().default(''),
 }, table => ([
   index('name_idx').on(table.lastName, table.firstName),
 ]))

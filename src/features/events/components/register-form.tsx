@@ -176,6 +176,25 @@ export default function RegisterForm() {
               )}
             </div>
             <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="school">School</Label>
+              <Input
+                id="school"
+                name="school"
+                placeholder="St. Mary's School"
+                required
+                minLength={3}
+                maxLength={25}
+                autoComplete="school"
+                aria-describedby="school-error"
+                className={state?.errors?.school ? 'border-red-500' : ''}
+              />
+              {state?.errors?.school && (
+                <p id="school-error" className="text-sm text-red-500">
+                  {state.errors.school[0]}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col space-y-1.5">
               <Label htmlFor="phoneNumber">MPESA Number</Label>
               <Input
                 id="phoneNumber"
