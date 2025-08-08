@@ -52,17 +52,7 @@ pnpm db:migrate
 pnpm db:studio
 ```
 
-## Environment Variables
-
-```bash
-# Database
-TURSO_CONNECTION_URL=
-TURSO_AUTH_TOKEN=
-
-# M-PESA (coming soon)
-MPESA_CONSUMER_KEY=
-MPESA_CONSUMER_SECRET=
-```
+To update production db, add `NODE_ENV=production` before the generate/migrate commands
 
 ## Learn More
 

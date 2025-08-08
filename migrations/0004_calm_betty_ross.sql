@@ -1,0 +1,1 @@
+ALTER TABLE "participants" ALTER COLUMN "school" SET DATA TYPE varchar(255);
