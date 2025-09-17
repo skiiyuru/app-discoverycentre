@@ -66,7 +66,7 @@ export default function RegisterForm() {
       <CardHeader>
         <CardTitle>Register for tournament</CardTitle>
         <CardDescription>Enter a participant's details and pay using MPESA.</CardDescription>
-        <CardDescription>Registration closes on 15th May 2025.</CardDescription>
+        {/* <CardDescription>Registration closes on 15th May 2025.</CardDescription> */}
       </CardHeader>
       <CardContent>
         <form action={action} autoComplete="on">
